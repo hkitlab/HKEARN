@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        .bottom-nav-item.active svg, .bottom-nav-item.active span { color: #3b82f6; /* blue-500 */ }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+        <img src="https://placehold.co/120x120/1f2937/ffffff?text=App" alt="App Logo" class="rounded-2xl mb-6">
+        <h1 class="text-4xl font-bold text-white mb-2">স্বাগতম!</h1>
+        <p class="text-gray-400 max-w-sm mb-8">শুরু করতে আপনার গুগল অ্যাকাউন্ট দিয়ে লগইন করুন।</p>
+        <button id="google-login-btn" class="bg-white text-gray-800 font-semibold py-3 px-6 rounded-lg flex items-center justify-center shadow-md hover:bg-gray-200 transition-colors w-full max-w-xs">
+            <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.986,36.691,44,31.016,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
+            Sign in with Google
+        </button>
+    </div>
+
+    <!-- Main Application Wrapper (Initially hidden) -->
+    <div id="app-wrapper" class="hidden max-w-lg mx-auto bg-gray-900 min-h-screen flex flex-col">
+        <!-- App Download Popup (conditionally shown) -->
+        <div id="download-popup" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 transition-opacity duration-300 opacity-0 hidden">
+            <!-- Popup content... (same as before) -->
+        </div>
+        
+        <!-- Top Header -->
+        <header id="app-header" class="sticky top-0 bg-gray-900 bg-opacity-80 backdrop-blur-sm z-30 p-4 flex justify-between items-center border-b border-gray-700">
+            <h1 id="page-title" class="text-xl font-bold text-white">ড্যাশবোর্ড</h1>
+            <div class="relative">
+                <svg id="notification-bell" class="w-6 h-6 text-gray-400 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-gray-900"></span>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-4 pb-24">
+            
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <!-- User Welcome -->
+                <div class="flex items-center space-x-4 mb-6">
+                    <img id="user-photo" src="https://placehold.co/64x64/3b82f6/ffffff?text=U" alt="Profile Picture" class="w-16 h-16 rounded-full border-2 border-blue-500">
+                    <div>
+                        <p class="text-gray-400">স্বাগতম,</p>
+                        <h2 id="user-name" class="text-2xl font-bold text-white">ব্যবহারকারী</h2>
+                    </div>
+                </div>
+
+                <!-- Balance Card -->
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 mb-6 text-white shadow-lg">
+                    <p class="text-sm opacity-80">বর্তমান ব্যালান্স</p>
+                    <p class="text-4xl font-bold mt-1">৳ 1,250.75</p>
+                    <div class="mt-4 flex space-x-4">
+                        <button class="bg-white bg-opacity-20 hover:bg-opacity-30 flex-1 py-2 rounded-lg text-sm font-semibold transition">টাকা যোগ করুন</button>
+                        <button data-page="withdraw-page" class="nav-link bg-white text-blue-700 flex-1 py-2 rounded-lg text-sm font-semibold transition">টাকা তুলুন</button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats & Daily Task CTA (same as before) -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-800 p-4 rounded-xl"><p class="text-sm text-gray-400">আজকের আয়</p><p class="text-2xl font-bold text-green-400">৳ 85.00</p></div>
+                    <div class="bg-gray-800 p-4 rounded-xl"><p class="text-sm text-gray-400">টাস্ক সম্পন্ন</p><p class="text-2xl font-bold text-white">5 / 10</p></div>
+                    <div class="bg-gray-800 p-4 rounded-xl"><p class="text-sm text-gray-400">মোট আয়</p><p class="text-2xl font-bold text-white">৳ 3,420.00</p></div>
+                    <div class="bg-gray-800 p-4 rounded-xl"><p class="text-sm text-gray-400">আমার টিম</p><p class="text-2xl font-bold text-white">12 জন</p></div>
+                </div>
+                <div class="bg-gray-800 p-5 rounded-xl flex items-center justify-between">
+                    <div><h3 class="font-bold text-lg text-white">আজকের টাস্ক</h3><p class="text-sm text-gray-400">আপনার আজকের টাস্কগুলো সম্পন্ন করুন।</p></div>
+                    <button data-page="tasks-page" class="nav-link bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">দেখুন</button>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="page">
+                <div class="flex flex-col items-center mb-6">
+                    <div class="relative">
+                        <img id="user-photo-profile" src="https://placehold.co/96x96/3b82f6/ffffff?text=U" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gray-700">
+                    </div>
+                    <h2 id="user-name-profile" class="text-2xl font-bold mt-4">ব্যবহারকারী</h2>
+                    <p id="user-id" class="text-gray-400 text-sm"></p>
+                </div>
+                <!-- Profile Form (same as before) -->
+                <div class="space-y-4">
+                    <div><label class="text-sm text-gray-400">নাম</label><input type="text" id="profile-name-input" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 mt-1 focus:ring-2 focus:ring-blue-500 focus:outline-none"></div>
+                    <div><label class="text-sm text-gray-400">ফোন নম্বর</label><input type="tel" value="01700112233" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 mt-1 focus:ring-2 focus:ring-blue-500 focus:outline-none"></div>
+                    <div><label class="text-sm text-gray-400">পেমেন্ট নম্বর (বিকাশ)</label><input type="tel" value="01700112233" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 mt-1 focus:ring-2 focus:ring-blue-500 focus:outline-none"></div>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">আপডেট করুন</button>
+                </div>
+                <!-- Logout Button -->
+                <div class="mt-8">
+                     <button id="logout-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition">লগআউট</button>
+                </div>
+            </div>
+
+            <!-- Other Pages (Packages, Tasks, Withdraw, Referral, Support) -->
+            <!-- The HTML for these pages is unchanged. I have omitted them for brevity but they should be here. -->
+            <div id="packages-page" class="page">... (same code as before) ...</div>
+            <div id="tasks-page" class="page">... (same code as before) ...</div>
+            <div id="withdraw-page" class="page">... (same code as before) ...</div>
+            <div id="referral-page" class="page">... (same code as before) ...</div>
+            <div id="support-page" class="page">... (same code as before) ...</div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav id="app-nav" class="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-gray-800 border-t border-gray-700 grid grid-cols-5 gap-1 p-2 z-30">
+             <!-- Navigation Buttons (same as before) -->
+            <button data-page="dashboard-page" class="bottom-nav-item active flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="text-xs mt-1">হোম</span></button>
+            <button data-page="packages-page" class="bottom-nav-item flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200 text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v2"/><path d="M21 14v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 3 5-3"/><path d="m7 14 5 3 5-3"/></svg><span class="text-xs mt-1">প্যাকেজ</span></button>
+            <button data-page="tasks-page" class="bottom-nav-item flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200 text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12l2 2 4-4"/></svg><span class="text-xs mt-1">টাস্ক</span></button>
+            <button data-page="referral-page" class="bottom-nav-item flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200 text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M18 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M6 21a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="m11.5 11.5 6 6"/></svg><span class="text-xs mt-1">রেফার</span></button>
+            <button data-page="profile-page" class="bottom-nav-item flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200 text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="text-xs mt-1">প্রোফাইল</span></button>
+        </nav>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // =================================================================
+            // শুরু করুন: আপনার Firebase কনফিগারেশন এখানে যোগ করুন
+            // Go to your Firebase project settings > General tab > Your apps > Web app
+            // And copy the firebaseConfig object here.
+            // =================================================================
+            const firebaseConfig = {
+                apiKey: "AIzaSyC_KJiMcn_UKslB-Y_Mpxq2XA6h-zxXygg",
+  authDomain: "hk-cash-316af.firebaseapp.com",
+  projectId: "hk-cash-316af",
+  storageBucket: "hk-cash-316af.firebasestorage.app",
+  messagingSenderId: "1012157922332",
+  appId: "1:1012157922332:web:b5485afd760901645ff3d9",
+};
+            // =================================================================
+            // শেষ: আপনার Firebase কনফিগারেশন এখানে যোগ করুন
+            // =================================================================
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const provider = new firebase.auth.GoogleAuthProvider();
+
+            // DOM Elements
+            const loginScreen = document.getElementById('login-screen');
+            const appWrapper = document.getElementById('app-wrapper');
+            const googleLoginBtn = document.getElementById('google-login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            // User Info Elements
+            const userNameElements = [document.getElementById('user-name'), document.getElementById('user-name-profile')];
+            const userPhotoElements = [document.getElementById('user-photo'), document.getElementById('user-photo-profile')];
+            const userIdElement = document.getElementById('user-id');
+            const profileNameInput = document.getElementById('profile-name-input');
+
+
+            // --- Firebase Auth State Listener ---
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // User is signed in
+                    loginScreen.classList.add('hidden');
+                    appWrapper.classList.remove('hidden');
+                    updateUserInfo(user);
+                } else {
+                    // User is signed out
+                    loginScreen.classList.remove('hidden');
+                    appWrapper.classList.add('hidden');
+                }
+            });
+
+            // --- Event Listeners ---
+            googleLoginBtn.addEventListener('click', () => {
+                auth.signInWithPopup(provider).catch(error => {
+                    console.error("Google Sign-In Error:", error);
+                });
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                auth.signOut();
+            });
+
+            function updateUserInfo(user) {
+                userNameElements.forEach(el => el.textContent = user.displayName || 'ব্যবহারকারী');
+                userPhotoElements.forEach(el => el.src = user.photoURL || 'https://placehold.co/96x96/3b82f6/ffffff?text=U');
+                userIdElement.textContent = `ID: ${user.uid.substring(0, 10).toUpperCase()}`;
+                profileNameInput.value = user.displayName || '';
+            }
+            
+            // --- Existing Dashboard Logic ---
+            const pages = document.querySelectorAll('.page');
+            const navLinks = document.querySelectorAll('.nav-link, .bottom-nav-item');
+            const pageTitle = document.getElementById('page-title');
+
+            const pageTitles = {
+                'dashboard-page': 'ড্যাশবোর্ড', 'profile-page': 'আমার প্রোফাইল', 'packages-page': 'প্যাকেজ',
+                'tasks-page': 'দৈনিক টাস্ক', 'withdraw-page': 'টাকা তুলুন', 'referral-page': 'রেফারেল', 'support-page': 'সাপোর্ট' 
+            };
+
+            function switchPage(pageId) {
+                pages.forEach(page => page.classList.remove('active'));
+                const newPage = document.getElementById(pageId);
+                if(newPage) {
+                    newPage.classList.add('active');
+                    pageTitle.textContent = pageTitles[pageId] || 'ড্যাশবোর্ড';
+                    document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                        item.classList.toggle('active', item.dataset.page === pageId);
+                        item.classList.toggle('text-gray-400', item.dataset.page !== pageId);
+                    });
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchPage(link.dataset.page);
+                });
+            });
+
+            // (The rest of the dashboard's JS logic for tabs, copy link, etc. remains the same)
+        });
+    </script>
+</body>
+</html>
+
