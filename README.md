@@ -55,6 +55,57 @@
 
 ## 🗂 Folder Structure
 
+hkearn/
+│
+├── index.html
+├── login.html
+├── register.html
+│
+├── user/
+│ ├── dashboard.html
+│ ├── tasks.html
+│ ├── packages.html
+│ ├── withdraw.html
+│ ├── referral.html
+│ ├── profile.html
+│ └── support.html
+│
+├── admin/
+│ ├── dashboard.html
+│ ├── users.html
+│ ├── tasks.html
+│ ├── packages.html
+│ ├── payments.html
+│ ├── withdraw.html
+│ ├── notifications.html
+│ └── reports.html
+│
+├── assets/
+│ ├── css/
+│ │ ├── style.css
+│ │ ├── user.css
+│ │ ├── admin.css
+│ │ ├── responsive.css
+│ │ └── darkmode.css
+│ ├── js/
+│ │ ├── main.js
+│ │ ├── user.js
+│ │ ├── admin.js
+│ │ ├── payment.js
+│ │ └── api.js
+│ ├── images/
+│ │ ├── logo.png
+│ │ ├── banner.jpg
+│ │ └── icons/
+│ └── fonts/
+│
+├── data/
+│ ├── packages.json
+│ ├── tasks.json
+│ ├── users.json
+│ └── transactions.json
+│
+└── README.md
 ---
 
 ## 🧭 How to Use Locally
