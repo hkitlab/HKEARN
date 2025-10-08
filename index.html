@@ -3,504 +3,1064 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>মনিটাইজেশন প্যানেল</title>
-    <!-- Tailwind CSS CDN -->
+    <title>HKEARN - High Earning Platform</title>
+    <!-- Tailwind CSS লোড করা হচ্ছে -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter (for modern look) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Inter Font লোড করা হচ্ছে -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        body {
+        /* গ্লাসমরফিজম এবং লাইভ গ্রেডিয়েন্টের জন্য কাস্টম স্টাইল */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-color: #f3f4f6;
             font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* Dark background */
-            color: #c9d1d9; /* Light text */
         }
-        .card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
+        .glass-card {
+            backdrop-filter: blur(20px);
+            background-color: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-        .btn-primary {
-            background-color: #238636; /* GitHub green */
-            transition: background-color 0.2s;
+
+        /* লাইভ গ্রেডিয়েন্ট অ্যানিমেশন */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(60px, -80px) scale(1.1); }
+            66% { transform: translate(-40px, 40px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
         }
-        .btn-primary:hover {
-            background-color: #2ea043;
+
+        #gradient-bg div {
+            mix-blend-mode: multiply;
+            filter: blur(40px);
+            opacity: 0.8;
+            position: absolute;
+            border-radius: 9999px;
+            animation: blob 15s infinite;
         }
-        .input-field {
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-        }
+
+        .blob-1 { background-color: #8b5cf6; top: 0; left: -10vw; width: 60vh; height: 60vh; animation-delay: 0s; }
+        .blob-2 { background-color: #facc15; top: 50vh; right: -10vw; width: 50vh; height: 50vh; animation-delay: 5s; }
+        .blob-3 { background-color: #ec4899; bottom: 0; left: 30vw; width: 70vh; height: 70vh; animation-delay: 10s; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="text-gray-100 min-h-screen">
 
-    <div id="loading-screen" class="fixed inset-0 flex items-center justify-center bg-[#0d1117] z-50">
-        <div class="text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
-            <p class="mt-4 text-lg">লোড হচ্ছে... (Initializing)</p>
-        </div>
+    <!-- লাইভ গ্রেডিয়েন্ট ব্যাকগ্রাউন্ড -->
+    <div id="gradient-bg" class="fixed inset-0 bg-gray-900 z-0">
+        <div class="blob-1"></div>
+        <div class="blob-2"></div>
+        <div class="blob-3"></div>
     </div>
 
-    <!-- Main Application Container -->
-    <div id="app-container" class="hidden max-w-7xl mx-auto">
-        
-        <!-- Header & Navigation -->
-        <header class="flex justify-between items-center pb-6 border-b border-gray-700 mb-8">
-            <h1 class="text-3xl font-bold text-green-400">মনিটাইজেশন ড্যাশবোর্ড</h1>
-            <button id="logout-btn" class="hidden btn-primary px-4 py-2 rounded-lg text-sm font-semibold">
-                লগআউট
-            </button>
-        </header>
-
-        <!-- Login/Register View -->
-        <section id="auth-view" class="max-w-md mx-auto card p-6">
-            <h2 class="text-xl font-semibold mb-6" id="auth-title">লগইন</h2>
-            <input type="email" id="email" placeholder="ইমেল" class="input-field w-full p-3 mb-4 rounded-lg">
-            <input type="password" id="password" placeholder="পাসওয়ার্ড" class="input-field w-full p-3 mb-6 rounded-lg">
-            <button id="auth-action-btn" class="btn-primary w-full p-3 font-bold rounded-lg mb-4">লগইন করুন</button>
-            <p id="auth-toggle" class="text-center text-sm cursor-pointer text-gray-400 hover:text-green-400">
-                অ্যাকাউন্ট নেই? <span class="font-bold">রেজিস্টার করুন</span>
-            </p>
-            <p id="auth-message" class="text-center text-red-400 mt-3"></p>
-        </section>
-
-        <!-- Dynamic Dashboard View (User/Admin) -->
-        <section id="dashboard-view" class="hidden">
-            <!-- User/Admin content will be injected here -->
-        </section>
-
+    <!-- প্রধান অ্যাপ্লিকেশন কন্টেইনার -->
+    <div id="app-container" class="relative z-10 p-4 sm:p-8">
+        <!-- JavaScript দ্বারা কন্টেন্ট এখানে যুক্ত হবে -->
     </div>
 
     <!-- Firebase SDKs -->
+    
     <script type="module">
+        // Firebase স্ট্যান্ডার্ড ইমপোর্টস
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, addDoc, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firestore লগের জন্য (ডিবাগিং-এর সময় সহায়ক)
-        setLogLevel('Debug');
-
-        // গ্লোবাল ভেরিয়েবল সেটআপ
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // Firestore ডাটাবেস ইমপোর্ট
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+‎        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+‎        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+‎
+‎        // --- IMPORTANT: Firebase Configuration ---
+‎        const firebaseConfig = {
+‎            apiKey: "AIzaSyBHjAaLeK3oa1r7fjaM25ILmQ4g3oIeh6g",
+‎            authDomain: "epaperbd-5cd65.firebaseapp.com",
+‎            projectId: "epaperbd-5cd65",
+‎            storageBucket: "epaperbd-5cd65.firebasestorage.app",
+‎            messagingSenderId: "1087957180039",
+‎            appId: "1:1087957180039:web:3c89510a3653646a33a222"
+‎        };
+‎        
+‎        // Initialize Firebase
+‎        const fbApp = initializeApp(firebaseConfig);
+‎        const auth = getAuth(fbApp);
+‎        const db = getFirestore(fbApp);
+‎        const storage = getStorage(fbApp);
+        // গ্লোবাল ভ্যারিয়েবল যা এনভায়রনমেন্ট দ্বারা সরবরাহ করা হয়
+        // **এগুলো আপনার Firebase Configuration লোড করবে**
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'hkearn-default-app-id';
 
-        let app, auth, db, userId = null;
-        let isRegisterMode = false;
+        // 1. ইনিশিয়ালাইজেশন: Auth এবং Firestore ডাটাবেস
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app); // <--- Firestore ডাটাবেস ইনিশিয়ালাইজ করা হলো
 
-        // DOM Elements
-        const loadingScreen = document.getElementById('loading-screen');
-        const appContainer = document.getElementById('app-container');
-        const authView = document.getElementById('auth-view');
-        const dashboardView = document.getElementById('dashboard-view');
-        const logoutBtn = document.getElementById('logout-btn');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const authActionBtn = document.getElementById('auth-action-btn');
-        const authToggle = document.getElementById('auth-toggle');
-        const authTitle = document.getElementById('auth-title');
-        const authMessage = document.getElementById('auth-message');
+        // Firebase ফাংশনগুলো গ্লোবাল স্কোপে এক্সপোর্ট করা হচ্ছে
+        window.firebase = {
+            auth, db, appId, initialAuthToken,
+            signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword,
+            signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification,
+            doc, setDoc, getDoc, updateDoc, onSnapshot
+        };
+        
+        // Firebase প্রস্তুত সংকেত
+        document.dispatchEvent(new Event('firebase-ready'));
+    </script>
 
-        // --- Firebase Initialization and Authentication Logic ---
+    <!-- প্রধান অ্যাপ্লিকেশন লজিক -->
+    <script>
+        document.addEventListener('firebase-ready', async () => {
+            const { auth, db, appId, initialAuthToken, signInAnonymously, signInWithCustomToken, 
+                onAuthStateChanged, doc, setDoc, updateDoc, onSnapshot, sendEmailVerification } = window.firebase;
 
-        try {
-            // ১. Firebase অ্যাপ ইনিশিয়ালাইজ করুন
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
+            // --- স্টেট ম্যানেজমেন্ট ---
+            let isAuthenticated = false;
+            let userId = null;
+            let userProfile = null;
+            let currentView = 'splash';
+            let systemConfig = {};
+            let currentLang = 'bn'; // ডিফল্ট ভাষা বাংলা সেট করা হলো
+
+            const appContainer = document.getElementById('app-container');
+
+            // --- লোকালইজেশন (BN/EN) ---
+            const translations = {
+                en: {
+                    appName: "HKEARN", welcome: "Welcome", backToDash: "Back to Dashboard", 
+                    loginTitle: "Welcome Back", signupTitle: "Join HKEARN", email: "Email", password: "Password", 
+                    loginBtn: "Login", signupBtn: "Sign Up", noAccount: "Don't have an account?", 
+                    haveAccount: "Already have an account?", loading: "Loading...",
+                    // Dashboard
+                    balance: "Current Balance", vipLevel: "VIP Level", taskATitle: "A Task (Ad/Video)", 
+                    taskVTitle: "V Task (Social Follow)", taskSTitle: "S Task (Survey)", 
+                    vipUpgradeTitle: "Upgrade VIP", withdrawTitle: "Withdraw", profileTitle: "Profile & Settings",
+                    referTitle: "Refer & Earn",
+                    // Tasks
+                    startTask: "Start Task", watch: "Watching...", complete: "Completed!", 
+                    pts: "Pts", taskReward: "Reward", copy: "Copy", copied: "Copied!",
+                    // Referral
+                    referHeader: "Refer Friends", referInfo: "Share your unique referral code and link to earn commission when friends join and upgrade VIP!",
+                    yourCode: "Your Referral Code", shareLink: "Share Link",
+                    // VIP
+                    upgradeVipHeader: "Upgrade to VIP", vipInfo: "To upgrade your VIP status and unlock higher earning tasks, please send the required amount to the Admin's Bkash/Nagad number below and submit the transaction ID (TxnID) for verification.",
+                    adminPhone: "Admin Payment Number", paymentMethod: "Payment Method", amountSent: "Amount Sent (BDT)",
+                    txnId: "Transaction ID (TxnID)", submitRequest: "Submit Verification Request",
+                    bkash: "Bkash", nagad: "Nagad",
+                    // Withdraw
+                    withdrawHeader: "Request Withdrawal", minWithdraw: "Minimum Withdrawal", accountNumber: "Account Number",
+                    withdrawAmount: "Amount to Withdraw", requestWithdraw: "Request Withdrawal", insufficient: "Insufficient balance.",
+                    // Profile
+                    userProfile: "User Profile", editProfile: "Edit Profile", displayName: "Display Name", 
+                    saveChanges: "Save Changes", appInfo: "App Information", appVersion: "App Version", 
+                    yourIP: "Your IP", privacyPolicy: "Privacy Policy", contactUs: "Contact Us",
+                    logout: "Logout", themeSetting: "Theme Setting", securitySetting: "Security Setting", 
+                    changePass: "Change Password",
+                    // Messages
+                    verificationSent: "Verification link sent to your email! Please check your inbox and log in after verification.",
+                    profileUpdated: "Profile updated successfully!",
+                    requestSubmitted: "Request submitted successfully! It will be processed soon.",
+                    failedRequest: "Failed to submit request. Please try again.",
+                    minWithdrawalError: "Minimum withdrawal is ",
+                    ipFetching: "Fetching...",
+                },
+                bn: {
+                    appName: "এইচকেআর্ন", welcome: "স্বাগতম", backToDash: "ড্যাশবোর্ডে ফিরে যান", 
+                    loginTitle: "আবার স্বাগতম", signupTitle: "এইচকেআর্নে যোগ দিন", email: "ইমেল", password: "পাসওয়ার্ড", 
+                    loginBtn: "লগইন", signupBtn: "সাইন আপ", noAccount: "একাউন্ট নেই?", 
+                    haveAccount: "ইতিমধ্যে একাউন্ট আছে?", loading: "লোড হচ্ছে...",
+                    // Dashboard
+                    balance: "বর্তমান ব্যালেন্স", vipLevel: "ভিআইপি লেভেল", taskATitle: "এ টাস্ক (বিজ্ঞাপন/ভিডিও)", 
+                    taskVTitle: "ভি টাস্ক (সোশ্যাল ফলো)", taskSTitle: "এস টাস্ক (সার্ভে)", 
+                    vipUpgradeTitle: "ভিআইপি আপগ্রেড", withdrawTitle: "উইথড্র", profileTitle: "প্রোফাইল ও সেটিংস",
+                    referTitle: "রেফার ও আয় করুন",
+                    // Tasks
+                    startTask: "টাস্ক শুরু করুন", watch: "দেখা হচ্ছে...", complete: "সম্পূর্ণ!", 
+                    pts: "পয়েন্ট", taskReward: "পুরস্কার", copy: "কপি করুন", copied: "কপি হয়েছে!",
+                    // Referral
+                    referHeader: "বন্ধুদের রেফার করুন", referInfo: "আপনার অনন্য রেফারেল কোড এবং লিঙ্ক শেয়ার করুন যখন বন্ধুরা যোগদান করবে এবং ভিআইপি আপগ্রেড করবে তখন কমিশন উপার্জন করুন!",
+                    yourCode: "আপনার রেফারেল কোড", shareLink: "শেয়ার লিঙ্ক",
+                    // VIP
+                    upgradeVipHeader: "ভিআইপি-তে আপগ্রেড করুন", vipInfo: "আপনার ভিআইপি স্ট্যাটাস আপগ্রেড করতে এবং বেশি উপার্জনের টাস্ক আনলক করতে, দয়া করে নীচের অ্যাডমিনের বিকাশ/নগদ নম্বরে প্রয়োজনীয় পরিমাণ টাকা পাঠান এবং যাচাইকরণের জন্য ট্রানজেকশন আইডি (TxnID) জমা দিন।",
+                    adminPhone: "অ্যাডমিন পেমেন্ট নম্বর", paymentMethod: "পেমেন্ট পদ্ধতি", amountSent: "প্রেরিত পরিমাণ (BDT)",
+                    txnId: "ট্রানজেকশন আইডি (TxnID)", submitRequest: "যাচাইকরণের অনুরোধ জমা দিন",
+                    bkash: "বিকাশ", nagad: "নগদ",
+                    // Withdraw
+                    withdrawHeader: "উইথড্র অনুরোধ করুন", minWithdraw: "সর্বনিম্ন উইথড্র", accountNumber: "একাউন্ট নম্বর",
+                    withdrawAmount: "উইথড্র করার পরিমাণ", requestWithdraw: "উইথড্র অনুরোধ করুন", insufficient: "অপর্যাপ্ত ব্যালেন্স।",
+                    // Profile
+                    userProfile: "ইউজার প্রোফাইল", editProfile: "প্রোফাইল সম্পাদনা", displayName: "প্রদর্শন নাম",
+                    saveChanges: "পরিবর্তন সংরক্ষণ করুন", appInfo: "অ্যাপ্লিকেশন তথ্য", appVersion: "অ্যাপ ভার্সন",
+                    yourIP: "আপনার আইপি", privacyPolicy: "গোপনীয়তা নীতি", contactUs: "যোগাযোগ করুন",
+                    logout: "লগ আউট", themeSetting: "থিম সেটিং", securitySetting: "নিরাপত্তা সেটিং", 
+                    changePass: "পাসওয়ার্ড পরিবর্তন",
+                    // Messages
+                    verificationSent: "আপনার ইমেলে যাচাইকরণ লিঙ্ক পাঠানো হয়েছে! দয়া করে আপনার ইনবক্স চেক করুন এবং যাচাইকরণের পর লগইন করুন।",
+                    profileUpdated: "প্রোফাইল সফলভাবে আপডেট করা হয়েছে!",
+                    requestSubmitted: "অনুরোধ সফলভাবে জমা হয়েছে! এটি শীঘ্রই প্রক্রিয়া করা হবে।",
+                    failedRequest: "অনুরোধ জমা দিতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
+                    minWithdrawalError: "সর্বনিম্ন উইথড্র হলো ",
+                    ipFetching: "সন্ধান করা হচ্ছে...",
+                }
+            };
+
+            const T = (key) => translations[currentLang][key] || key;
+
+            const setLanguage = (lang) => {
+                currentLang = lang;
+                renderView();
+            };
+
+            // --- ইউটিলিটিজ ---
+
+            const copyToClipboard = (text, elementId) => {
+                const tempInput = document.createElement('textarea');
+                tempInput.value = text;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                try {
+                    document.execCommand('copy');
+                    const btn = document.getElementById(elementId);
+                    if (btn) {
+                        btn.innerHTML = T('copied');
+                        setTimeout(() => btn.innerHTML = T('copy'), 2000);
+                    }
+                    showMessage(T('copied'), 'success');
+                } catch (err) {
+                    console.error('কপি ব্যর্থ হয়েছে:', err);
+                    showMessage('টেক্সট কপি করা যায়নি।', 'error');
+                }
+                document.body.removeChild(tempInput);
+            };
+            window.copyToClipboard = copyToClipboard; // গ্লোবালি এক্সপোজ করা হলো
+
+            const showMessage = (msg, type = 'success') => {
+                const existingMsg = document.getElementById('app-message');
+                if (existingMsg) existingMsg.remove();
+                
+                const color = type === 'success' ? 'bg-green-500/50' : 'bg-red-500/50';
+                const html = `
+                    <div id="app-message" class="fixed top-4 right-4 p-4 rounded-xl text-white font-semibold shadow-lg z-50 transition-opacity duration-300 ${color}">
+                        ${msg}
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', html);
+                setTimeout(() => {
+                    const el = document.getElementById('app-message');
+                    if (el) el.remove();
+                }, 5000);
+            };
+
+            const generateMockUid = () => {
+                // ৬-সংখ্যার র্যান্ডম নম্বর স্ট্রিং (রেফারেল কোড হিসাবে ব্যবহৃত)
+                return String(Math.floor(100000 + Math.random() * 900000));
+            };
             
-            // ২. ইনিশিয়াল অথ টোকেন ব্যবহার করে সাইন ইন করুন
-            if (initialAuthToken) {
-                signInWithCustomToken(auth, initialAuthToken)
-                    .catch(error => {
-                        console.error("Custom token sign-in failed. Falling back to anonymous:", error);
-                        signInAnonymously(auth);
-                    });
-            } else {
-                signInAnonymously(auth);
-            }
+            const LoadingSpinner = () => `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            `;
 
-            // ৩. Auth State Listener
-            onAuthStateChanged(auth, async (user) => {
-                loadingScreen.classList.add('hidden');
-                appContainer.classList.remove('hidden');
+            // --- ভিউ কম্পোনেন্টস (HTML টেমপ্লেট) ---
 
-                if (user) {
-                    userId = user.uid;
-                    authView.classList.add('hidden');
-                    dashboardView.classList.remove('hidden');
-                    logoutBtn.classList.remove('hidden');
+            const renderGlassCard = (content, title = '', className = '', clickHandler = '') => {
+                return `
+                    <div 
+                        class="glass-card p-4 sm:p-6 lg:p-8 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-inner ${clickHandler ? 'cursor-pointer' : ''} ${className}"
+                        ${clickHandler ? `onclick="${clickHandler}"` : ''}
+                    >
+                        ${title ? `<h3 class="text-xl font-bold mb-4 text-white">${title}</h3>` : ''}
+                        ${content}
+                    </div>
+                `;
+            };
 
-                    // Firestore থেকে ব্যবহারকারীর রোল এবং ব্যালেন্স আনুন
-                    const userDocRef = doc(db, "artifacts", appId, "users", userId, "profile", "info");
-                    const userDoc = await getDoc(userDocRef);
-                    
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        
-                        if (userData.role === 'admin') {
-                            renderAdminDashboard(userData);
+            const renderAdPlaceholder = (type) => `
+                <div class="w-full ${type === 'banner' ? 'h-16' : 'h-64'} my-4 bg-red-600/30 border border-red-500/50 rounded-xl flex items-center justify-center text-white text-sm font-semibold text-center">
+                    ${type.toUpperCase()} AD Placeholder (Admin ID: ${type === 'banner' ? systemConfig.admobBannerId || 'N/A' : systemConfig.admobInterstitialId || 'N/A'})
+                </div>
+            `;
+            
+            // --- ২. স্প্ল্যাশ স্ক্রিন ---
+            const renderSplashScreen = () => `
+                <div class="fixed inset-0 flex flex-col items-center justify-center bg-gray-900/90 z-50">
+                    <div class="text-8xl mb-4 animate-bounce">
+                        <span role="img" aria-label="HKEARN Logo">💰</span>
+                    </div>
+                    <h1 class="text-5xl font-extrabold tracking-widest text-white">${T('appName')}</h1>
+                    <div class="flex items-center mt-6 text-white">${LoadingSpinner()} ${T('loading')}</div>
+                </div>
+            `;
+
+            // --- ৩. অথ ভিউ ---
+            const renderAuth = (isLogin = true, error = '') => {
+                const content = `
+                    <div class="w-full max-w-md mx-auto p-4 sm:p-0">
+                        ${renderGlassCard(`
+                            <h1 class="text-3xl font-extrabold text-white mb-6 text-center">${isLogin ? T('loginTitle') : T('signupTitle')}</h1>
+                            
+                            <form id="auth-form" class="space-y-4">
+                                <input type="email" id="auth-email" placeholder="${T('email')}" required 
+                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/70 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input type="password" id="auth-password" placeholder="${T('password')}" required 
+                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/70 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+
+                                ${error ? `<p class="text-red-300 text-sm mt-2">${error}</p>` : ''}
+                                
+                                <button type="submit" id="auth-submit-btn" class="w-full py-3 mt-4 text-lg font-bold rounded-xl text-white transition-all duration-300
+                                    bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/50">
+                                    ${isLogin ? T('loginBtn') : T('signupBtn')}
+                                </button>
+                            </form>
+
+                            <p class="text-center text-white/70 mt-6 text-sm">
+                                ${isLogin ? T('noAccount') : T('haveAccount')}
+                                <button onclick="window.renderAuth(!${isLogin})" class="text-blue-300 hover:text-blue-100 font-semibold transition-colors">
+                                    ${isLogin ? T('signupBtn') : T('loginBtn')}
+                                </button>
+                            </p>
+                        `, '', 'mx-auto')}
+                    </div>
+                `;
+                appContainer.innerHTML = content;
+                attachAuthHandlers(isLogin);
+            };
+            window.renderAuth = renderAuth; // গ্লোবালি এক্সপোজ করা হলো
+
+            const attachAuthHandlers = (isLogin) => {
+                document.getElementById('auth-form').onsubmit = async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('auth-email').value;
+                    const password = document.getElementById('auth-password').value;
+                    const btn = document.getElementById('auth-submit-btn');
+                    btn.disabled = true;
+                    btn.innerHTML = `${LoadingSpinner()} ${T('loading')}`;
+
+                    try {
+                        let userCredential;
+                        if (isLogin) {
+                            userCredential = await window.firebase.signInWithEmailAndPassword(auth, email, password);
+                            if (!userCredential.user.emailVerified) {
+                                await sendEmailVerification(userCredential.user);
+                                showMessage(T('verificationSent'), 'error');
+                                await window.firebase.signOut(auth);
+                                renderAuth(true, 'লগইন করার আগে দয়া করে আপনার ইমেল যাচাই করুন। যাচাইকরণ লিঙ্ক পুনরায় পাঠানো হয়েছে।');
+                                return;
+                            }
                         } else {
-                            renderUserDashboard(userData);
+                            userCredential = await window.firebase.createUserWithEmailAndPassword(auth, email, password);
+                            await sendEmailVerification(userCredential.user);
+                            
+                            // সাইনআপে বেস প্রোফাইল তৈরি করা (Firestore এ ডেটা সংরক্ষণ)
+                            // ব্যক্তিগত ডেটা পাথ: /artifacts/{appId}/users/{userId}/profile/data
+                            const userDocRef = doc(db, `/artifacts/${appId}/users/${userCredential.user.uid}/profile/data`);
+                            await setDoc(userDocRef, {
+                                email: userCredential.user.email,
+                                displayName: userCredential.user.email.split('@')[0],
+                                balance: 0,
+                                vipLevel: 0,
+                                // ৬-সংখ্যার র্যান্ডম নম্বর UID/Referral Code হিসাবে
+                                uid: generateMockUid(), 
+                                createdAt: Date.now(),
+                                profilePhotoUrl: 'https://placehold.co/100x100/3b82f6/ffffff?text=P',
+                            });
+
+                            showMessage(T('verificationSent'), 'success');
+                            renderAuth(true); // লগইনে পরিবর্তন
+                            return;
                         }
-                    } else {
-                        // যদি প্রোফাইল ডেটা না থাকে, তবে লগআউট করুন এবং সাইন-ইন স্ক্রিন দেখান।
-                        console.log("Profile data missing, rendering auth view.");
-                        signOut(auth);
+                    } catch (err) {
+                        console.error(err);
+                        const errorMsg = err.message.replace('Firebase: ', 'ফায়ারবেস এরর: ');
+                        renderAuth(isLogin, errorMsg);
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = isLogin ? T('loginBtn') : T('signupBtn');
+                    }
+                };
+            };
+            
+            // --- ৪. টাস্ক ভিউ লজিক ---
+            const handleTaskCompletion = async (taskId, reward) => {
+                if (!userId || !userProfile) return;
+                try {
+                    // Firestore এ ব্যালেন্স আপডেট
+                    const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/profile/data`);
+                    await updateDoc(userDocRef, {
+                        balance: userProfile.balance + reward
+                    });
+                    showMessage(`${T('complete')} +${reward} ${T('pts')}`, 'success');
+                } catch (error) {
+                    console.error("ব্যালেন্স আপডেটে এরর:", error);
+                    showMessage(T('failedRequest'), 'error');
+                }
+            };
+
+            const renderTaskCard = (task, type) => {
+                // টাস্ক কাউন্টডাউন লজিক
+                window[`startTask${task.id}`] = (initialTime) => {
+                    let time = initialTime;
+                    const btn = document.getElementById(`btn-${task.id}`);
+                    btn.disabled = true;
+                    btn.classList.add('bg-yellow-600/50', 'animate-pulse');
+                    
+                    const interval = setInterval(() => {
+                        if (time <= 0) {
+                            clearInterval(interval);
+                            btn.innerHTML = `${T('complete')} +${task.reward} ${T('pts')}`;
+                            btn.classList.remove('bg-yellow-600/50', 'animate-pulse');
+                            btn.classList.add('bg-green-600/50');
+                            btn.onclick = null;
+                            handleTaskCompletion(task.id, task.reward);
+                        } else {
+                            btn.innerHTML = `${T('watch')} ${time}s`;
+                            time--;
+                        }
+                    }, 1000);
+
+                    // সোশ্যাল টাস্কের জন্য লিঙ্ক ওপেন
+                    if (task.type === 'V Task' && task.link) window.open(task.link, '_blank');
+                };
+
+                return renderGlassCard(`
+                    <div class="flex items-center justify-between p-2 !py-2">
+                        <div>
+                            <h4 class="text-lg font-semibold text-white">${task.name}</h4>
+                            <p class="text-sm text-white/70">${type} | ${T('taskReward')}: ${task.reward} ${T('pts')}</p>
+                            ${task.vipRequired > userProfile.vipLevel ? `<p class="text-xs text-red-300 font-bold mt-1">VIP Lvl ${task.vipRequired} Required</p>` : ''}
+                        </div>
+                        <button
+                            id="btn-${task.id}"
+                            onclick="window.startTask${task.id}(${task.timeLimit})"
+                            class="px-4 py-2 rounded-xl text-sm font-semibold transition-colors
+                                ${task.vipRequired > userProfile.vipLevel ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}"
+                            ${task.vipRequired > userProfile.vipLevel ? 'disabled' : ''}
+                        >
+                            ${T('startTask')}
+                        </button>
+                    </div>
+                `, '', 'mb-4', '');
+            };
+
+            const renderTaskView = (title, tasks, type) => {
+                const taskCards = tasks.map(task => renderTaskCard(task, type)).join('');
+
+                const content = `
+                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
+                        ${T('backToDash')}
+                    </button>
+                    <h2 class="text-3xl font-bold text-white mb-6 border-b border-white/20 pb-2">${title}</h2>
+                    ${renderAdPlaceholder('banner')}
+                    <div class="lg:grid lg:grid-cols-2 lg:gap-6">
+                        ${taskCards}
+                    </div>
+                    ${renderAdPlaceholder('interstitial')}
+                `;
+                appContainer.innerHTML = content;
+            };
+
+            // --- ৫. নেভিগেশন/রাউটিং ---
+            
+            const renderView = (view = currentView) => {
+                currentView = view;
+                // টাস্ক তালিকা (এডমিন কন্ট্রোলড)
+                let tasks = []; 
+                if (userProfile) {
+                    tasks = [
+                        { id: 'a1', name: 'Watch Ad #1 (5s)', type: 'A Task', timeLimit: 5, reward: 2, vipRequired: 0 },
+                        { id: 'a2', name: 'Watch Ad #2 (10s)', type: 'A Task', timeLimit: 10, reward: 5, vipRequired: 0 },
+                        { id: 'a3', name: 'VIP Video Task (15s)', type: 'A Task', timeLimit: 15, reward: 15, vipRequired: 1 },
+                        { id: 'v1', name: 'Subscribe YouTube', type: 'V Task', timeLimit: 15, reward: 10, link: 'https://youtube.com/channel', vipRequired: 0 },
+                        { id: 'v2', name: 'Follow Facebook Page', type: 'V Task', timeLimit: 10, reward: 7, link: 'https://facebook.com/page', vipRequired: 0 },
+                        { id: 's1', name: 'Complete Short Survey', type: 'S Task', timeLimit: 30, reward: 20, vipRequired: 0 },
+                        { id: 's2', name: 'High Value Survey', type: 'S Task', timeLimit: 60, reward: 50, vipRequired: 2 },
+                    ];
+                }
+
+                switch (view) {
+                    case 'splash':
+                        appContainer.innerHTML = renderSplashScreen();
+                        setTimeout(() => {
+                            if (isAuthenticated) {
+                                renderView('dashboard');
+                            } else {
+                                renderView('auth');
+                            }
+                        }, 3000);
+                        break;
+                    case 'auth':
+                        renderAuth(true);
+                        break;
+                    case 'dashboard':
+                        appContainer.innerHTML = renderDashboard();
+                        break;
+                    case 'A_TASK':
+                        renderTaskView(T('taskATitle'), tasks.filter(t => t.type === 'A Task'), 'Ad/Video');
+                        break;
+                    case 'V_TASK':
+                        renderTaskView(T('taskVTitle'), tasks.filter(t => t.type === 'V Task'), 'Social Media');
+                        break;
+                    case 'S_TASK':
+                        renderTaskView(T('taskSTitle'), tasks.filter(t => t.type === 'S Task'), 'Survey');
+                        break;
+                    case 'VIP_UPGRADE':
+                        appContainer.innerHTML = renderVIPUpgrade();
+                        attachVIPHandlers();
+                        break;
+                    case 'WITHDRAW':
+                        appContainer.innerHTML = renderWithdraw();
+                        attachWithdrawHandlers();
+                        break;
+                    case 'PROFILE_SETTINGS':
+                        appContainer.innerHTML = renderProfileSettings(false);
+                        attachProfileHandlers();
+                        break;
+                    case 'REFER':
+                        appContainer.innerHTML = renderReferralView();
+                        break;
+                }
+            };
+            window.setView = renderView;
+
+            // --- ৬. ড্যাশবোর্ড ভিউ ---
+            const renderDashboard = () => {
+                const { balance, vipLevel, displayName, profilePhotoUrl, uid } = userProfile;
+                
+                const headerCard = renderGlassCard(`
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <img src="${profilePhotoUrl}" alt="Profile" class="h-12 w-12 rounded-full object-cover border-2 border-white/50" />
+                            <div class="ml-3">
+                                <h2 class="text-xl font-bold text-white">${T('welcome')}, ${displayName}!</h2>
+                                <p class="text-sm text-white/70">UID: ${uid}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-semibold text-white/80">${T('balance')}</p>
+                            <p class="text-3xl font-extrabold text-green-300">${balance.toFixed(2)}</p>
+                            <p class="text-xs font-bold ${vipLevel > 0 ? 'text-yellow-400' : 'text-red-400'}">
+                                ${T('vipLevel')}: Lvl ${vipLevel}
+                            </p>
+                        </div>
+                    </div>
+                `, '', 'mb-8 p-4');
+
+                const navItems = [
+                    { name: T('taskATitle'), view: 'A_TASK', color: 'bg-indigo-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>' },
+                    { name: T('taskVTitle'), view: 'V_TASK', color: 'bg-pink-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2h-7a2 2 0 01-2-2V5z" /></svg>' },
+                    { name: T('taskSTitle'), view: 'S_TASK', color: 'bg-cyan-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM7 11a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>' },
+                    { name: T('vipUpgradeTitle'), view: 'VIP_UPGRADE', color: 'bg-yellow-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.696h3.462c.969 0 1.371 1.24.588 1.81l-2.817 2.036a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.817-2.036a1 1 0 00-1.175 0l-2.817 2.036c-.785.57-1.84-.197-1.54-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.725c-.783-.57-.381-1.81.588-1.81h3.461a1 1 0 00.951-.696l1.07-3.292z" /></svg>' },
+                    { name: T('withdrawTitle'), view: 'WITHDRAW', color: 'bg-green-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 9.586V6z" clip-rule="evenodd" /></svg>' },
+                    { name: T('referTitle'), view: 'REFER', color: 'bg-orange-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 00-2 2v6H2a2 2 0 00-2 2v2a2 2 0 002 2h16a2 2 0 002-2v-2a2 2 0 00-2-2h-1V6a2 2 0 00-2-2H5zm3 2a1 1 0 011-1h2a1 1 0 011 1v1H8V6zm-3 5h10V8H5v3z" /></svg>' },
+                    { name: T('profileTitle'), view: 'PROFILE_SETTINGS', color: 'bg-blue-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.98 5.98 0 0010 16a5.979 5.979 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" /></svg>' },
+                ];
+
+                const navGrid = navItems.map(item => `
+                    <div 
+                        onclick="window.setView('${item.view}')"
+                        class="glass-card flex flex-col items-center justify-center text-center p-4 h-32 hover:border-blue-400/50 cursor-pointer transition duration-300"
+                    >
+                        <div class="text-white mb-2">${item.icon}</div>
+                        <p class="text-sm font-semibold text-white">${item.name}</p>
+                    </div>
+                `).join('');
+                
+                // ভাষা পরিবর্তনকারী
+                const langSwitcher = `
+                    <div class="absolute top-4 right-4 z-20">
+                        <button onclick="setLanguage('en')" class="text-sm font-semibold px-3 py-1 rounded-l-full ${currentLang === 'en' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/70'}">EN</button>
+                        <button onclick="setLanguage('bn')" class="text-sm font-semibold px-3 py-1 rounded-r-full ${currentLang === 'bn' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/70'}">BN</button>
+                    </div>
+                `;
+
+                return `
+                    ${langSwitcher}
+                    ${renderAdPlaceholder('banner')}
+                    ${headerCard}
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        ${navGrid}
+                    </div>
+                    ${renderAdPlaceholder('interstitial')}
+                `;
+            };
+
+            // --- ৭. রেফারেল ভিউ ---
+            const renderReferralView = () => {
+                const referralCode = userProfile.uid; // ৬-সংখ্যার UID রেফারেল কোড হিসাবে ব্যবহৃত
+                const appName = T('appName');
+                // মক লিঙ্ক
+                const shareUrl = `https://hkearn.app/signup?ref=${referralCode}`; 
+                
+                return `
+                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
+                        ${T('backToDash')}
+                    </button>
+                    ${renderGlassCard(`
+                        <p class="text-white/80 mb-6">${T('referInfo')}</p>
+
+                        <!-- রেফারেল কোড কার্ড -->
+                        <div class="glass-card bg-indigo-700/30 p-4 mb-6 border-indigo-500/50">
+                            <label class="block text-indigo-300 font-semibold mb-2">${T('yourCode')} (${appName})</label>
+                            <div class="flex items-center justify-between">
+                                <p class="text-3xl font-mono font-extrabold text-white tracking-widest">${referralCode}</p>
+                                <button id="copy-code-btn" onclick="window.copyToClipboard('${referralCode}', 'copy-code-btn')" 
+                                    class="px-4 py-2 rounded-xl text-sm font-bold bg-white/20 hover:bg-white/30 transition-colors">
+                                    ${T('copy')}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- শেয়ার লিঙ্ক কার্ড -->
+                        <div class="glass-card bg-green-700/30 p-4 border-green-500/50">
+                            <label class="block text-green-300 font-semibold mb-2">${T('shareLink')}</label>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-mono text-white/80 truncate mr-4">${shareUrl}</p>
+                                <button id="copy-link-btn" onclick="window.copyToClipboard('${shareUrl}', 'copy-link-btn')" 
+                                    class="px-4 py-2 rounded-xl text-sm font-bold bg-white/20 hover:bg-white/30 transition-colors flex-shrink-0">
+                                    ${T('copy')}
+                                </button>
+                            </div>
+                        </div>
+                        
+                    `, T('referHeader'), 'max-w-xl mx-auto')}
+                `;
+            };
+
+            // --- ৮. ভিআইপি আপগ্রেড ভিউ ---
+            const renderVIPUpgrade = () => {
+                const adminPhoneNumber = systemConfig.adminPhone || '+88017xxxxxxxx'; // অ্যাডমিন নিয়ন্ত্রিত
+                return `
+                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
+                        ${T('backToDash')}
+                    </button>
+                    ${renderGlassCard(`
+                        <p class="text-white/80 mb-4">${T('vipInfo')}</p>
+
+                        <div class="bg-blue-900/50 p-3 rounded-xl mb-6 border border-blue-500/50">
+                            <p class="font-semibold text-blue-300">${T('adminPhone')}:</p>
+                            <p class="text-xl font-bold text-white">${adminPhoneNumber}</p>
+                        </div>
+
+                        <form id="vip-form" class="space-y-4">
+                            <div>
+                                <label class="block text-white/80 mb-1">${T('paymentMethod')}</label>
+                                <select id="vip-method" required class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                    <option value="bkash" class="bg-gray-800 text-white">${T('bkash')} (Manual)</option>
+                                    <option value="nagad" class="bg-gray-800 text-white">${T('nagad')} (Manual)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-white/80 mb-1">${T('amountSent')}</label>
+                                <input type="number" id="vip-amount" placeholder="e.g., 500" required min="10" 
+                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-white/80 mb-1">${T('txnId')}</label>
+                                <input type="text" id="vip-txn-id" placeholder="${T('txnId')}" required 
+                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+
+                            <button type="submit" id="vip-submit-btn" class="w-full py-3 mt-4 text-lg font-bold rounded-xl text-white transition-all duration-300
+                                bg-green-600 hover:bg-green-700 shadow-lg shadow-green-500/50">
+                                ${T('submitRequest')}
+                            </button>
+                        </form>
+                    `, T('upgradeVipHeader'), 'max-w-xl mx-auto')}
+                `;
+            };
+
+            const attachVIPHandlers = () => {
+                document.getElementById('vip-form').onsubmit = async (e) => {
+                    e.preventDefault();
+                    const amount = parseFloat(document.getElementById('vip-amount').value);
+                    const method = document.getElementById('vip-method').value;
+                    const txnId = document.getElementById('vip-txn-id').value;
+                    const btn = document.getElementById('vip-submit-btn');
+
+                    btn.disabled = true;
+                    btn.innerHTML = `${LoadingSpinner()} ${T('loading')}`;
+
+                    try {
+                        // Firestore: অ্যাডমিন পর্যালোচনার জন্য পাবলিক কালেকশনে অনুরোধ সংরক্ষণ
+                        // পাবলিক ডেটা পাথ: /artifacts/{appId}/public/data/upgradeRequests
+                        const requestRef = doc(db, `/artifacts/${appId}/public/data/upgradeRequests`, `req_${Date.now()}`);
+                        await setDoc(requestRef, {
+                            userId: userId,
+                            amount: amount,
+                            method: method,
+                            txnId: txnId,
+                            status: 'Pending',
+                            timestamp: Date.now(),
+                            userEmail: userProfile.email,
+                            uid: userProfile.uid,
+                        });
+                        showMessage(T('requestSubmitted'), 'success');
+                        document.getElementById('vip-form').reset();
+                    } catch (error) {
+                        console.error("ভিআইপি অনুরোধ জমা দেওয়ায় এরর:", error);
+                        showMessage(T('failedRequest'), 'error');
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = T('submitRequest');
+                    }
+                };
+            };
+            
+            // --- ৯. উইথড্র ভিউ ---
+            const renderWithdraw = () => {
+                const minWithdrawal = systemConfig.minWithdrawal || 100; // অ্যাডমিন নিয়ন্ত্রিত
+                return `
+                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
+                        ${T('backToDash')}
+                    </button>
+                    ${renderGlassCard(`
+                        <div class="bg-green-900/50 p-3 rounded-xl mb-6 border border-green-500/50">
+                            <p class="font-semibold text-green-300">${T('balance')}:</p>
+                            <p class="text-3xl font-bold text-white">${userProfile.balance.toFixed(2)} ${T('pts')}</p>
+                            <p class="text-sm text-white/70 mt-1">${T('minWithdraw')}: ${minWithdrawal} ${T('pts')}</p>
+                        </div>
+
+                        <form id="withdraw-form" class="space-y-4">
+                            <div>
+                                <label class="block text-white/80 mb-1">${T('paymentMethod')}</label>
+                                <select id="withdraw-method" required class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                    <option value="bkash" class="bg-gray-800 text-white">${T('bkash')} Personal</option>
+                                    <option value="nagad" class="bg-gray-800 text-white">${T('nagad')} Personal</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-white/80 mb-1">${T('accountNumber')}</label>
+                                <input type="text" id="withdraw-account" placeholder="১১-সংখ্যার অ্যাকাউন্ট নম্বর লিখুন" required minLength="11" maxLength="11"
+                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-white/80 mb-1">${T('withdrawAmount')} (${T('pts')})</label>
+                                <input type="number" id="withdraw-amount" placeholder="${T('minWithdraw')} ${minWithdrawal}" required min="${minWithdrawal}" max="${userProfile.balance}"
+                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+
+                            <button type="submit" id="withdraw-submit-btn" class="w-full py-3 mt-4 text-lg font-bold rounded-xl text-white transition-all duration-300
+                                bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-500/50">
+                                ${T('requestWithdraw')}
+                            </button>
+                        </form>
+                    `, T('withdrawHeader'), 'max-w-xl mx-auto')}
+                `;
+            };
+
+            const attachWithdrawHandlers = () => {
+                document.getElementById('withdraw-form').onsubmit = async (e) => {
+                    e.preventDefault();
+                    const amount = parseFloat(document.getElementById('withdraw-amount').value);
+                    const method = document.getElementById('withdraw-method').value;
+                    const account = document.getElementById('withdraw-account').value;
+                    const minWithdrawal = systemConfig.minWithdrawal || 100;
+                    const btn = document.getElementById('withdraw-submit-btn');
+
+                    if (amount < minWithdrawal) {
+                        showMessage(`${T('minWithdrawalError')} ${minWithdrawal} ${T('pts')}.`, 'error');
+                        return;
+                    }
+
+                    if (amount > userProfile.balance) {
+                        showMessage(T('insufficient'), 'error');
+                        return;
+                    }
+
+                    btn.disabled = true;
+                    btn.innerHTML = `${LoadingSpinner()} ${T('loading')}`;
+
+                    try {
+                        // ১. সাথে সাথে ব্যালেন্স কাটা (Firestore আপডেট)
+                        const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/profile/data`);
+                        await updateDoc(userDocRef, {
+                            balance: userProfile.balance - amount
+                        });
+
+                        // ২. অ্যাডমিনের জন্য উইথড্রয়াল অনুরোধ তৈরি (Firestore পাবলিক কালেকশন)
+                        // পাবলিক ডেটা পাথ: /artifacts/{appId}/public/data/withdrawalRequests
+                        const requestRef = doc(db, `/artifacts/${appId}/public/data/withdrawalRequests`, `req_${Date.now()}`);
+                        await setDoc(requestRef, {
+                            userId: userId,
+                            amount: amount,
+                            method: method,
+                            account: account,
+                            status: 'Pending',
+                            timestamp: Date.now(),
+                            userEmail: userProfile.email,
+                            uid: userProfile.uid,
+                        });
+
+                        showMessage(T('requestSubmitted'), 'success');
+                        document.getElementById('withdraw-form').reset();
+                    } catch (error) {
+                        console.error("উইথড্রয়াল অনুরোধ জমা দেওয়ায় এরর:", error);
+                        showMessage(T('failedRequest'), 'error');
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = T('requestWithdraw');
+                    }
+                };
+            };
+
+            // --- ১০. প্রোফাইল এবং সেটিংস ভিউ ---
+
+            const renderProfileSettings = (isEditing) => {
+                const { displayName, email, uid, vipLevel, profilePhotoUrl } = userProfile;
+                
+                const profileDetails = `
+                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                        <div class="relative">
+                            <img src="${profilePhotoUrl}" alt="Profile" class="h-24 w-24 rounded-full object-cover border-4 border-white/50 shadow-lg"/>
+                            <button onclick="showMessage('ছবি আপলোডের জন্য Firebase Storage প্রয়োজন (প্লেসহোল্ডার)।')" class="absolute bottom-0 right-0 bg-blue-500 p-1 rounded-full hover:bg-blue-600 transition-colors" title="ছবি আপলোড">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-white">${displayName}</p>
+                            <p class="text-white/70">${email}</p>
+                            <p class="text-lg font-mono text-yellow-300 mt-2">UID: ${uid}</p>
+                            <p class="text-sm font-semibold mt-1 ${vipLevel > 0 ? 'text-green-400' : 'text-red-400'}">${T('vipLevel')}: Lvl ${vipLevel}</p>
+                        </div>
+                    </div>
+                `;
+
+                const editForm = `
+                    <form id="edit-profile-form" class="space-y-4">
+                        <div>
+                            <label class="block text-white/80 mb-1">${T('displayName')}</label>
+                            <input type="text" id="edit-display-name" value="${displayName}" required
+                                class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                        </div>
+                        <button type="submit" id="profile-save-btn" class="w-full py-3 font-bold rounded-xl text-white transition-all duration-300
+                            bg-blue-600 hover:bg-blue-700">
+                            ${T('saveChanges')}
+                        </button>
+                    </form>
+                `;
+
+                const settings = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-white/80 mb-1">${T('themeSetting')}</label>
+                            <select class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                <option class="bg-gray-800 text-white">Dark Glass (বর্তমান)</option>
+                                <option class="bg-gray-800 text-white">Light Glass (প্লেসহোল্ডার)</option>
+                            </select>
+                        </div>
+                        <div class="pt-2 border-t border-white/10">
+                            <h4 class="text-white font-semibold mb-2">${T('securitySetting')}</h4>
+                            <button onclick="showMessage('পাসওয়ার্ড পরিবর্তনের জন্য Firebase Auth প্রয়োজন (প্লেসহোল্ডার)।')" class="w-full py-3 font-bold rounded-xl text-white transition-all duration-300 bg-red-600/70 hover:bg-red-700/70">
+                                ${T('changePass')}
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                const infoSection = `
+                    <div class="space-y-3 text-white/80">
+                        <p><strong>${T('appVersion')}:</strong> 1.0.0 (Auto)</p>
+                        <p><strong>${T('yourIP')}:</strong> ${userProfile.ip || T('ipFetching')}</p>
+                        <p class="pt-2 border-t border-white/10">
+                            <strong>${T('privacyPolicy')}:</strong> <span class="text-blue-300 cursor-pointer hover:underline" onclick="showMessage(systemConfig.privacyPolicy || 'Admin দ্বারা পলিসি সেট করা হয়নি।')">${T('privacyPolicy')}</span>
+                        </p>
+                        <p>
+                            <strong>${T('contactUs')}:</strong> <span class="text-blue-300 cursor-pointer hover:underline" onclick="showMessage(systemConfig.contactUs || 'Admin দ্বারা যোগাযোগের তথ্য সেট করা হয়নি।')">${T('contactUs')}</span>
+                        </p>
+                        <button onclick="handleLogout()" class="w-full py-3 font-bold rounded-xl text-white transition-all duration-300 bg-red-800/70 hover:bg-red-900/70 mt-4">
+                            ${T('logout')}
+                        </button>
+                    </div>
+                `;
+
+                return `
+                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
+                        ${T('backToDash')}
+                    </button>
+                    <h2 class="text-3xl font-bold text-white mb-6 border-b border-white/20 pb-2">${T('profileTitle')}</h2>
+
+                    <div class="lg:grid lg:grid-cols-2 lg:gap-6">
+                        <div>
+                            ${renderGlassCard(isEditing ? editForm : profileDetails, isEditing ? T('editProfile') : T('userProfile'), 'mb-6')}
+                            <div class="text-center">
+                                <button onclick="window.renderProfileSettings(!${isEditing})" class="text-blue-300 hover:text-blue-100 transition-colors font-semibold mb-6">
+                                    ${isEditing ? 'এডিট বাতিল করুন' : T('editProfile')}
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            ${renderGlassCard(settings, T('profileTitle'), 'mb-6')}
+                            ${renderGlassCard(infoSection, T('appInfo'), 'space-y-3')}
+                        </div>
+                    </div>
+                `;
+            };
+            window.renderProfileSettings = (isEditing) => {
+                appContainer.innerHTML = renderProfileSettings(isEditing);
+                attachProfileHandlers();
+            };
+            
+            const attachProfileHandlers = () => {
+                if (document.getElementById('edit-profile-form')) {
+                    document.getElementById('edit-profile-form').onsubmit = async (e) => {
+                        e.preventDefault();
+                        const newDisplayName = document.getElementById('edit-display-name').value;
+                        const btn = document.getElementById('profile-save-btn');
+
+                        btn.disabled = true;
+                        btn.innerHTML = `${LoadingSpinner()} ${T('loading')}`;
+                        
+                        try {
+                            // Firestore: ডিসপ্লে নাম আপডেট
+                            const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/profile/data`);
+                            await updateDoc(userDocRef, { displayName: newDisplayName });
+                            showMessage(T('profileUpdated'), 'success');
+                            window.renderProfileSettings(false);
+                        } catch (error) {
+                            console.error("প্রোফাইল আপডেটে এরর:", error);
+                            showMessage(T('failedRequest'), 'error');
+                        } finally {
+                            btn.disabled = false;
+                            btn.innerHTML = T('saveChanges');
+                        }
+                    };
+                }
+            };
+
+            // --- ১১. কোর অ্যাপ্লিকেশন ফ্লো ---
+
+            const handleLogout = async () => {
+                try {
+                    await window.firebase.signOut(auth);
+                } catch (error) {
+                    console.error("লগআউট এরর:", error);
+                }
+            };
+            window.handleLogout = handleLogout; // গ্লোবালি এক্সপোজ করা হলো
+
+            // Auth স্টেট পরিবর্তনে নজর রাখা
+            window.firebase.onAuthStateChanged(auth, (user) => {
+                if (user && user.emailVerified) {
+                    isAuthenticated = true;
+                    userId = user.uid;
+                    if (currentView === 'auth' || currentView === 'splash') {
+                        renderView('dashboard');
+                    }
+                } else if (user && !user.isAnonymous) {
+                    // লগইন হয়েছে কিন্তু যাচাইকৃত নয়
+                    if (currentView !== 'auth') {
+                         showMessage('লগইন করার আগে দয়া করে আপনার ইমেল যাচাই করুন।', 'error');
+                         window.firebase.signOut(auth);
                     }
                 } else {
-                    // লগইন বা রেজিস্ট্রেশন ভিউ দেখান
+                    isAuthenticated = false;
                     userId = null;
-                    authView.classList.remove('hidden');
-                    dashboardView.classList.add('hidden');
-                    logoutBtn.classList.add('hidden');
+                    userProfile = null;
+                    if (currentView !== 'splash') {
+                        renderView('auth');
+                    }
                 }
             });
 
-        } catch (error) {
-            console.error("Firebase initialization failed:", error);
-            document.getElementById('loading-screen').innerHTML = `<p class="text-red-500">Firebase ইনিশিয়ালাইজেশন ব্যর্থ: ${error.message}</p>`;
-        }
-        
-        // --- UI Event Handlers ---
+            // Firestore প্রোফাইল এবং কনফিগারেশন পরিবর্তনে নজর রাখা
+            const setupFirestoreListeners = () => {
+                if (!userId) return;
 
-        authToggle.addEventListener('click', () => {
-            isRegisterMode = !isRegisterMode;
-            authTitle.textContent = isRegisterMode ? 'রেজিস্টার' : 'লগইন';
-            authActionBtn.textContent = isRegisterMode ? 'রেজিস্টার করুন' : 'লগইন করুন';
-            authToggle.innerHTML = isRegisterMode ? 'ইতিমধ্যে অ্যাকাউন্ট আছে? <span class="font-bold">লগইন করুন</span>' : 'অ্যাকাউন্ট নেই? <span class="font-bold">রেজিস্টার করুন</span>';
-            authMessage.textContent = '';
-        });
+                // প্রোফাইল লিসেনার (প্রাইভেট ডেটা - রিয়েল-টাইম)
+                // /artifacts/{appId}/users/{userId}/profile/data
+                const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/profile/data`);
+                onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        userProfile = {
+                            ...data,
+                            balance: data.balance || 0,
+                            vipLevel: data.vipLevel || 0,
+                            uid: data.uid || generateMockUid(),
+                            profilePhotoUrl: data.profilePhotoUrl || 'https://placehold.co/100x100/3b82f6/ffffff?text=P',
+                        };
+                        // সুরক্ষিত ভিউতে থাকলে পুনরায় রেন্ডার করা
+                        if (isAuthenticated) {
+                            if (currentView === 'dashboard' || currentView.includes('TASK') || currentView === 'WITHDRAW' || currentView === 'PROFILE_SETTINGS' || currentView === 'REFER' || currentView === 'VIP_UPGRADE') {
+                                renderView(currentView);
+                            }
+                        }
+                    } else {
+                        // যদি ডকুমেন্ট না থাকে (নতুন ব্যবহারকারী যার ডেটা এখনো তৈরি হয়নি)
+                        userProfile = { balance: 0, vipLevel: 0, displayName: auth.currentUser?.email.split('@')[0] || 'User', email: auth.currentUser?.email || 'N/A', uid: generateMockUid(), profilePhotoUrl: 'https://placehold.co/100x100/3b82f6/ffffff?text=P' };
+                    }
+                }, (error) => console.error("প্রোফাইল লিসেনার এরর:", error));
 
-        authActionBtn.addEventListener('click', () => {
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            authMessage.textContent = '';
+                // সিস্টেম কনফিগারেশন লিসেনার (অ্যাডমিন নিয়ন্ত্রিত পাবলিক ডেটা - রিয়েল-টাইম)
+                // /artifacts/{appId}/public/data/systemConfig/settings
+                const configDocRef = doc(db, `/artifacts/${appId}/public/data/systemConfig/settings`);
+                onSnapshot(configDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        systemConfig = docSnap.data();
+                    } else {
+                        // ডিফল্ট ফলব্যাক কনফিগারেশন
+                        systemConfig = {
+                            privacyPolicy: "এটি অ্যাডমিন দ্বারা সেট করা একটি প্লেসহোল্ডার পলিসি।",
+                            contactUs: "ইমেল: support@hkearn.com",
+                            admobBannerId: "ca-app-pub-xxx-banner-admin-controlled",
+                            admobInterstitialId: "ca-app-pub-xxx-inter-admin-controlled",
+                            adminPhone: "+8801700123456",
+                            minWithdrawal: 100
+                        };
+                    }
+                    if (currentView === 'VIP_UPGRADE' || currentView === 'WITHDRAW' || currentView === 'PROFILE_SETTINGS') {
+                        renderView(currentView);
+                    }
+                }, (error) => console.error("কনফিগ লিসেনার এরর:", error));
+                
+                // এক্সটার্নাল আইপি লোড করা (ক্লায়েন্ট-সাইড) এবং Firestore এ সংরক্ষণ
+                fetch('https://api.ipify.org?format=json')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.ip) {
+                            updateDoc(userDocRef, { ip: data.ip });
+                        }
+                    })
+                    .catch(err => console.log('আইপি লোড করা যায়নি:', err));
+            };
 
-            if (isRegisterMode) {
-                handleRegister(email, password);
+            // যখন অথ স্টেট পরিবর্তিত হয়ে লগইন হয়, তখন লিসেনার চালানো
+            onAuthStateChanged(auth, (user) => {
+                if (user && user.emailVerified) {
+                    userId = user.uid;
+                    setupFirestoreListeners();
+                }
+            });
+            
+            // প্রাথমিক অথেন্টিকেশন চেষ্টা
+            if (initialAuthToken) {
+                try {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } catch (error) {
+                    console.error("কাস্টম টোকেন সাইন-ইন ব্যর্থ, অজ্ঞাতনামা সাইন-ইন করা হচ্ছে:", error);
+                    await signInAnonymously(auth);
+                }
             } else {
-                handleLogin(email, password);
+                await signInAnonymously(auth);
             }
-        });
 
-        logoutBtn.addEventListener('click', () => {
-            signOut(auth);
-        });
-
-        // --- Authentication Functions ---
-
-        async function handleLogin(email, password) {
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                authMessage.textContent = `লগইন ব্যর্থ: ${error.message.replace('Firebase: Error (auth/', '').replace(/\)\./g, '')}`;
-            }
-        }
-
-        async function handleRegister(email, password) {
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                // Firestore-এ সাধারণ ব্যবহারকারী হিসেবে ডেটা সংরক্ষণ
-                const userDocRef = doc(db, "artifacts", appId, "users", user.uid, "profile", "info");
-                await setDoc(userDocRef, {
-                    email: email,
-                    role: 'user', // ডিফল্ট রোল 'user'
-                    balance: 0.00,
-                    name: 'নতুন ব্যবহারকারী',
-                    createdAt: new Date().toISOString()
-                });
-            } catch (error) {
-                authMessage.textContent = `রেজিস্ট্রেশন ব্যর্থ: ${error.message.replace('Firebase: Error (auth/', '').replace(/\)\./g, '')}`;
-            }
-        }
-
-        // --- Dashboard Rendering Functions ---
-
-        function renderUserDashboard(userData) {
-            const userHtml = `
-                <div class="space-y-8">
-                    <h2 class="text-2xl font-semibold text-green-300 border-b border-gray-700 pb-3">ব্যবহারকারী ড্যাশবোর্ড</h2>
-                    <p class="text-sm text-gray-400">আপনার ইউজার আইডি (অন্যদের সাথে শেয়ার করার জন্য): <span class="font-mono text-green-400 break-all">${userId}</span></p>
-
-                    <!-- ব্যালেন্স কার্ড -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-medium mb-2">বর্তমান ব্যালেন্স</h3>
-                        <p id="user-balance" class="text-4xl font-bold text-yellow-400">$${userData.balance.toFixed(2)}</p>
-                        <button class="btn-primary mt-4 px-4 py-2 rounded-lg">পেমেন্টের অনুরোধ করুন</button>
-                    </div>
-
-                    <!-- ওয়েবসাইট যোগ করার ফর্ম -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-medium mb-4">নতুন ওয়েবসাইট যোগ করুন</h3>
-                        <input type="url" id="new-site-url" placeholder="ওয়েবসাইটের URL (যেমন: https://example.com)" class="input-field w-full p-3 mb-4 rounded-lg">
-                        <button id="add-site-btn" class="btn-primary w-full p-3 font-bold rounded-lg">পর্যালোচনার জন্য জমা দিন</button>
-                    </div>
-
-                    <!-- সক্রিয় ওয়েবসাইট তালিকা -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-medium mb-4">আপনার ওয়েবসাইটসমূহ</h3>
-                        <div id="user-sites-list" class="space-y-4">
-                            <!-- সাইট তালিকা এখানে লোড হবে -->
-                            <p class="text-gray-500">ওয়েবসাইট ডেটা লোড হচ্ছে...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            dashboardView.innerHTML = userHtml;
-
-            // ইভেন্ট লিসেনার সেটআপ
-            document.getElementById('add-site-btn').addEventListener('click', handleAddSite);
+            // গ্লোবালি ভাষা সেট করা
+            window.setLanguage = setLanguage;
             
-            // রিয়েল-টাইম ডেটা লোড
-            listenToUserBalance(userId);
-            listenToUserWebsites(userId);
-        }
+            // অ্যাপ্লিকেশন ফ্লো শুরু করা
+            renderView('splash');
 
-        function renderAdminDashboard(userData) {
-            const adminHtml = `
-                <div class="space-y-8">
-                    <h2 class="text-2xl font-semibold text-red-400 border-b border-gray-700 pb-3">অ্যাডমিন কন্ট্রোল প্যানেল</h2>
-                    <p class="text-sm text-gray-400">অ্যাডমিন আইডি: <span class="font-mono text-green-400 break-all">${userId}</span></p>
-
-                    <!-- সিস্টেম স্ট্যাটাস -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="card p-6">
-                            <h3 class="text-lg font-medium">মোট ইউজার</h3>
-                            <p id="total-users" class="text-3xl font-bold text-blue-400">...</p>
-                        </div>
-                        <div class="card p-6">
-                            <h3 class="text-lg font-medium">পর্যালোচনাধীন সাইট</h3>
-                            <p id="pending-sites-count" class="text-3xl font-bold text-yellow-400">...</p>
-                        </div>
-                        <div class="card p-6">
-                            <h3 class="text-lg font-medium">মোট আয় (সিস্টেম)</h3>
-                            <p class="text-3xl font-bold text-green-400">$0.00</p>
-                        </div>
-                    </div>
-
-                    <!-- অপেক্ষমান ওয়েবসাইট পর্যালোচনা -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-medium mb-4">অপেক্ষমান ওয়েবসাইটসমূহ (Review Queue)</h3>
-                        <div id="pending-sites-list" class="space-y-4">
-                            <!-- অপেক্ষমান সাইট তালিকা এখানে লোড হবে -->
-                            <p class="text-gray-500">অপেক্ষমান ডেটা লোড হচ্ছে...</p>
-                        </div>
-                    </div>
-                    
-                    <!-- সকল ব্যবহারকারী -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-medium mb-4">সকল প্ল্যাটফর্ম ব্যবহারকারী</h3>
-                        <div id="all-users-list" class="space-y-4">
-                            <p class="text-gray-500">ব্যবহারকারীর ডেটা লোড হচ্ছে...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            dashboardView.innerHTML = adminHtml;
-            
-            // রিয়েল-টাইম ডেটা লোড
-            listenToAllUsers();
-            listenToPendingWebsites();
-        }
-
-        // --- User Logic Functions ---
-
-        async function handleAddSite() {
-            const url = document.getElementById('new-site-url').value.trim();
-            if (!url) return alert('দয়া করে একটি সঠিক URL দিন।');
-
-            const user = auth.currentUser;
-            if (!user) return alert('অনুগ্রহ করে পুনরায় লগইন করুন।');
-
-            try {
-                const websitesColRef = collection(db, "artifacts", appId, "public", "data", "websites");
-                await addDoc(websitesColRef, {
-                    userId: user.uid,
-                    url: url,
-                    status: 'pending', // পর্যালোচনার জন্য অপেক্ষমান
-                    monetizationCode: `AD-${Date.now()}-${user.uid.substring(0, 4)}`, // ইউনিক কোড
-                    currentEarnings: 0.00,
-                    submittedAt: new Date().toISOString()
-                });
-                document.getElementById('new-site-url').value = '';
-                // কাস্টম মেসেজ বক্স ব্যবহার করা উচিত, তবে এখানে alert ব্যবহার করা হলো নির্দেশ অনুসারে
-                alert('ওয়েবসাইটটি সফলভাবে পর্যালোচনার জন্য জমা দেওয়া হয়েছে। অ্যাডমিন অনুমোদন দিলে এটি সক্রিয় হবে।');
-            } catch (error) {
-                console.error("Error submitting site:", error);
-                alert('ওয়েবসাইট জমা দিতে ব্যর্থ: ' + error.message);
-            }
-        }
-
-        // --- Firestore Listeners (Real-time Data) ---
-
-        function listenToUserBalance(uid) {
-            const profileDocRef = doc(db, "artifacts", appId, "users", uid, "profile", "info");
-            
-            onSnapshot(profileDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const balance = docSnap.data().balance || 0.00;
-                    const balanceEl = document.getElementById('user-balance');
-                    if (balanceEl) {
-                        balanceEl.textContent = `$${balance.toFixed(2)}`;
-                    }
-                }
-            }, (error) => {
-                console.error("Error fetching balance:", error);
-            });
-        }
-        
-        function listenToUserWebsites(uid) {
-            const websitesColRef = collection(db, "artifacts", appId, "public", "data", "websites");
-            const q = query(websitesColRef, where("userId", "==", uid));
-            const listEl = document.getElementById('user-sites-list');
-
-            onSnapshot(q, (snapshot) => {
-                if (!listEl) return;
-                listEl.innerHTML = '';
-                if (snapshot.empty) {
-                    listEl.innerHTML = '<p class="text-gray-500">আপনার কোনো ওয়েবসাইট যুক্ত করা নেই।</p>';
-                    return;
-                }
-
-                snapshot.docs.forEach(doc => {
-                    const site = doc.data();
-                    const statusClass = site.status === 'active' ? 'text-green-500' : (site.status === 'pending' ? 'text-yellow-500' : 'text-red-500');
-                    
-                    listEl.innerHTML += `
-                        <div class="p-4 card flex justify-between items-center">
-                            <div>
-                                <p class="text-lg font-semibold">${site.url}</p>
-                                <p class="text-sm ${statusClass}">স্ট্যাটাস: ${site.status.toUpperCase()}</p>
-                                <p class="text-sm text-gray-400 mt-1">আয়: <span class="text-yellow-300 font-bold">$${site.currentEarnings.toFixed(2)}</span></p>
-                            </div>
-                            ${site.status === 'active' ? 
-                                `<button onclick="copyCode('${site.monetizationCode}')" class="btn-primary text-xs px-3 py-1">কোড কপি করুন</button>` 
-                                : ''}
-                        </div>
-                    `;
-                });
-            }, (error) => {
-                if (listEl) listEl.innerHTML = `<p class="text-red-400">ওয়েবসাইট লোড করতে ব্যর্থ: ${error.message}</p>`;
-                console.error("Error fetching user sites:", error);
-            });
-        }
-        
-        // গ্লোবাল ফাংশন যা কপি করতে পারবে (ইনলাইন ইভেন্টের জন্য)
-        window.copyCode = function(code) {
-            const tempInput = document.createElement("textarea");
-            tempInput.value = code;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            alert(`মনিটাইজেশন কোড কপি করা হয়েছে: ${code}`); // কাস্টম মেসেজ বক্স ব্যবহার করা উচিত
-        }
-
-        // --- Admin Logic Functions and Listeners ---
-        
-        function listenToAllUsers() {
-            const usersColRef = collection(db, "artifacts", appId, "users");
-            const listEl = document.getElementById('all-users-list');
-
-            // 'profile' সাব-কালেকশন থেকে ডেটা আনার জন্য একটি বিশেষ কোয়েরি
-            // Firebase-এ এটি সরাসরি করা কঠিন, তাই আমরা শুধু ডকুমেন্ট আইডিগুলি দেখাব
-            // অথবা একটি ডামি 'profile' কালেকশন থেকে টানব। এখানে আমরা একটি সিমুলেটেড লিস্ট দেখাব।
-            // সঠিক বাস্তবায়নের জন্য Cloud Functions বা কমপ্লেক্স Firestore নিয়ম দরকার।
-            // সরলতার জন্য, আমরা শুধুমাত্র ডিরেক্টরি ডকুমেন্টগুলি দেখব (যদি থাকে)।
-
-            onSnapshot(usersColRef, (snapshot) => {
-                 if (!listEl) return;
-                listEl.innerHTML = '';
-                let totalUsers = 0;
-
-                snapshot.docs.forEach(async (docSnap) => {
-                    // প্রতিটি ইউজার ডকুমেন্ট এর ভেতরের প্রোফাইল info ডকুমেন্ট লোড করুন
-                    const profileDocRef = doc(db, "artifacts", appId, "users", docSnap.id, "profile", "info");
-                    const profileDoc = await getDoc(profileDocRef);
-
-                    if (profileDoc.exists()) {
-                        const userData = profileDoc.data();
-                        totalUsers++;
-                        
-                        listEl.innerHTML += `
-                            <div class="p-4 card flex justify-between items-center text-sm">
-                                <div>
-                                    <p class="font-semibold">${userData.email} (${userData.role.toUpperCase()})</p>
-                                    <p class="text-gray-500">ID: ${docSnap.id}</p>
-                                </div>
-                                <p class="font-bold text-yellow-300">Balance: $${userData.balance.toFixed(2)}</p>
-                            </div>
-                        `;
-                    }
-                });
-                
-                document.getElementById('total-users').textContent = totalUsers;
-
-            }, (error) => {
-                if (listEl) listEl.innerHTML = `<p class="text-red-400">ব্যবহারকারী লোড করতে ব্যর্থ: ${error.message}</p>`;
-                console.error("Error fetching all users:", error);
-            });
-        }
-
-
-        function listenToPendingWebsites() {
-            const websitesColRef = collection(db, "artifacts", appId, "public", "data", "websites");
-            const q = query(websitesColRef, where("status", "==", "pending"));
-            const listEl = document.getElementById('pending-sites-list');
-
-            onSnapshot(q, (snapshot) => {
-                if (!listEl) return;
-                listEl.innerHTML = '';
-                document.getElementById('pending-sites-count').textContent = snapshot.size;
-
-                if (snapshot.empty) {
-                    listEl.innerHTML = '<p class="text-gray-500">পর্যালোচনার জন্য কোনো ওয়েবসাইট নেই।</p>';
-                    return;
-                }
-
-                snapshot.docs.forEach(doc => {
-                    const site = doc.data();
-                    
-                    listEl.innerHTML += `
-                        <div class="p-4 card">
-                            <p class="text-lg font-semibold text-yellow-300">${site.url}</p>
-                            <p class="text-sm text-gray-400">ব্যবহারকারী ID: ${site.userId}</p>
-                            <div class="mt-3 space-x-3">
-                                <button onclick="handleApproval('${doc.id}', 'active')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm">অনুমোদন (Approve)</button>
-                                <button onclick="handleApproval('${doc.id}', 'rejected')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm">বাতিল (Reject)</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            }, (error) => {
-                if (listEl) listEl.innerHTML = `<p class="text-red-400">অপেক্ষমান সাইট লোড করতে ব্যর্থ: ${error.message}</p>`;
-                console.error("Error fetching pending sites:", error);
-            });
-        }
-        
-        // গ্লোবাল ফাংশন: অ্যাডমিন দ্বারা সাইট অনুমোদন/বাতিল
-        window.handleApproval = async function(siteId, newStatus) {
-            if (!confirm(`আপনি কি নিশ্চিত যে আপনি এই সাইটটি "${newStatus.toUpperCase()}" করতে চান?`)) {
-                return;
-            }
-            try {
-                const docRef = doc(db, "artifacts", appId, "public", "data", "websites", siteId);
-                await setDoc(docRef, { status: newStatus }, { merge: true });
-                alert(`সাইটটি সফলভাবে "${newStatus.toUpperCase()}" করা হয়েছে।`);
-            } catch (error) {
-                console.error("Approval/Rejection failed:", error);
-                alert('স্ট্যাটাস আপডেট করতে ব্যর্থ: ' + error.message);
-            }
-        }
-
+        }); // firebase-ready ইভেন্ট লিসেনারের শেষ
     </script>
 </body>
 </html>
-
-
