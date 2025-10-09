@@ -1,1066 +1,715 @@
-<!DOCTYPE html>
+                                                        </button>
+                                                                    <p class="text-sm text-white/70 mt-1">${T('minWithdraw')}: ${minWithdrawal} ${T('pts')}</p>
+                                                </div>
+                                                    privacyPolicy: "এটি অ্যাডমিন দ্বারা সেট করা একটি প্লেসহোল্ডার পলিসি।",
+                            <!DOCTYPE html>
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKEARN - High Earning Platform</title>
-    <!-- Tailwind CSS লোড করা হচ্ছে -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>HKEARN - আয় করুন</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font লোড করা হচ্ছে -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* গ্লাসমরফিজম এবং লাইভ গ্রেডিয়েন্টের জন্য কাস্টম স্টাইল */
-        :root {
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --text-color: #f3f4f6;
-            font-family: 'Inter', sans-serif;
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        .glass-card {
-            backdrop-filter: blur(20px);
-            background-color: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        /* একটিভ ন্যাভ লিঙ্কের জন্য স্টাইল */
+        .nav-link.active {
+            color: #4f46e5;
         }
-
-        /* লাইভ গ্রেডিয়েন্ট অ্যানিমেশন */
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(60px, -80px) scale(1.1); }
-            66% { transform: translate(-40px, 40px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
+        .nav-link.active .nav-icon {
+            transform: scale(1.1);
         }
-
-        #gradient-bg div {
-            mix-blend-mode: multiply;
-            filter: blur(40px);
-            opacity: 0.8;
-            position: absolute;
-            border-radius: 9999px;
-            animation: blob 15s infinite;
+        /* টাস্কের জন্য কার্ড স্টাইল */
+        .task-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-
-        .blob-1 { background-color: #8b5cf6; top: 0; left: -10vw; width: 60vh; height: 60vh; animation-delay: 0s; }
-        .blob-2 { background-color: #facc15; top: 50vh; right: -10vw; width: 50vh; height: 50vh; animation-delay: 5s; }
-        .blob-3 { background-color: #ec4899; bottom: 0; left: 30vw; width: 70vh; height: 70vh; animation-delay: 10s; }
+        .task-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* কাস্টম টোস্ট নোটিফিকেশন */
+        #toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+        }
+        #toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -10px);
+        }
+        #toast.success { background-color: #28a745; }
+        #toast.error { background-color: #dc3545; }
     </style>
 </head>
-<body class="text-gray-100 min-h-screen">
+<body class="bg-gray-100">
 
-    <!-- লাইভ গ্রেডিয়েন্ট ব্যাকগ্রাউন্ড -->
-    <div id="gradient-bg" class="fixed inset-0 bg-gray-900 z-0">
-        <div class="blob-1"></div>
-        <div class="blob-2"></div>
-        <div class="blob-3"></div>
+    <!-- Global Loader -->
+    <div id="global-loader" class="fixed inset-0 bg-white flex justify-center items-center z-50">
+        <div class="loader"></div>
     </div>
 
-    <!-- প্রধান অ্যাপ্লিকেশন কন্টেইনার -->
-    <div id="app-container" class="relative z-10 p-4 sm:p-8">
-        <!-- JavaScript দ্বারা কন্টেন্ট এখানে যুক্ত হবে -->
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <!-- Login/Register Screen -->
+    <div id="auth-screen" class="hidden">
+        <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+            <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+                <div id="login-view">
+                    <h2 class="text-2xl font-bold text-center text-gray-800">HKEARN এ লগইন করুন</h2>
+                    <form id="login-form" class="mt-6 space-y-6">
+                        <input type="email" id="login-email" placeholder="আপনার ইমেইল" required class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="password" id="login-password" placeholder="আপনার পাসওয়ার্ড" required class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <p id="login-error" class="text-sm text-red-600"></p>
+                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">লগইন</button>
+                    </form>
+                    <p class="mt-4 text-center text-sm">অ্যাকাউন্ট নেই? <a href="#" id="show-register" class="font-medium text-indigo-600 hover:text-indigo-500">রেজিস্টার করুন</a></p>
+                </div>
+                <div id="register-view" class="hidden">
+                    <h2 class="text-2xl font-bold text-center text-gray-800">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+                    <form id="register-form" class="mt-6 space-y-4">
+                        <input type="text" id="register-name" placeholder="আপনার নাম" required class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm">
+                        <input type="email" id="register-email" placeholder="আপনার ইমেইল" required class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm">
+                        <input type="password" id="register-password" placeholder="নতুন পাসওয়ার্ড" required class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" id="register-referral" placeholder="রেফারেল কোড (ঐচ্ছিক)" class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm">
+                        <p id="register-error" class="text-sm text-red-600"></p>
+                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">রেজিস্টার</button>
+                    </form>
+                    <p class="mt-4 text-center text-sm"> ইতোমধ্যে অ্যাকাউন্ট আছে? <a href="#" id="show-login" class="font-medium text-indigo-600 hover:text-indigo-500">লগইন করুন</a></p>
+                </div>
+                 <div class="relative flex py-4 items-center">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="flex-shrink mx-4 text-gray-400">অথবা</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+                <button id="google-login" class="w-full flex items-center justify-center px-4 py-3 font-semibold text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    <i class="fab fa-google mr-2"></i> গুগল দিয়ে ادامه দিন
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Main App Screen -->
+    <div id="app-screen" class="hidden">
+        <main class="pb-20">
+            <!-- Home Page -->
+            <div id="home-page" class="page active p-4">
+                <div class="bg-indigo-600 text-white p-6 rounded-xl shadow-lg mb-6">
+                     <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-lg font-medium">মোট ব্যালেন্স</p>
+                            <h2 class="text-4xl font-bold"><span id="user-balance">0</span> পয়েন্ট</h2>
+                        </div>
+                        <i class="fas fa-wallet fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">আপনার জন্য টাস্ক</h3>
+                <div id="home-tasks" class="grid grid-cols-2 gap-4">
+                   <!-- Tasks will be loaded here -->
+                   <a href="#" class="nav-link-btn" data-page="tasks">
+                        <div class="bg-white p-4 rounded-lg shadow text-center">
+                            <i class="fas fa-play-circle fa-2x text-red-500 mb-2"></i>
+                            <p class="font-semibold">ভিডিও দেখুন</p>
+                        </div>
+                   </a>
+                   <a href="#" class="nav-link-btn" data-page="tasks">
+                        <div class="bg-white p-4 rounded-lg shadow text-center">
+                            <i class="fas fa-globe fa-2x text-blue-500 mb-2"></i>
+                            <p class="font-semibold">ওয়েবসাইট ভিজিট</p>
+                        </div>
+                   </a>
+                     <a href="#" class="nav-link-btn" data-page="tasks">
+                        <div class="bg-white p-4 rounded-lg shadow text-center">
+                            <i class="fas fa-mouse-pointer fa-2x text-green-500 mb-2"></i>
+                            <p class="font-semibold">অ্যাড ক্লিক</p>
+                        </div>
+                   </a>
+                   <a href="#" class="nav-link-btn" data-page="profile">
+                        <div class="bg-white p-4 rounded-lg shadow text-center">
+                            <i class="fas fa-user-plus fa-2x text-purple-500 mb-2"></i>
+                            <p class="font-semibold">রেফার করুন</p>
+                        </div>
+                   </a>
+                </div>
+            </div>
+
+            <!-- Tasks Page -->
+            <div id="tasks-page" class="page p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">সব টাস্ক</h2>
+                <div id="task-list" class="space-y-4">
+                    <!-- Task items will be loaded here -->
+                    <p>লোড হচ্ছে...</p>
+                </div>
+            </div>
+
+            <!-- Withdraw Page -->
+            <div id="withdraw-page" class="page p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">টাকা তুলুন</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                     <form id="withdraw-form" class="space-y-4">
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">কত টাকা তুলবেন?</label>
+                            <input type="number" id="withdraw-amount" required placeholder="100" class="w-full mt-1 px-3 py-2 border rounded-md">
+                            <p class="text-xs text-gray-500 mt-1">১০০০ পয়েন্ট = ১০ টাকা</p>
+                         </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">পেমেন্ট মাধ্যম</label>
+                            <select id="withdraw-method" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                <option value="Bkash">বিকাশ</option>
+                                <option value="Nagad">নগদ</option>
+                                <option value="Bank">ব্যাংক</option>
+                            </select>
+                         </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">অ্যাকাউন্ট নম্বর</label>
+                            <input type="text" id="withdraw-account" required placeholder="আপনার অ্যাকাউন্ট নম্বর" class="w-full mt-1 px-3 py-2 border rounded-md">
+                         </div>
+                         <button type="submit" class="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">রিকোয়েস্ট পাঠান</button>
+                     </form>
+                </div>
+                <h3 class="text-xl font-semibold mt-6 mb-3">আপনার উইথড্রল হিস্ট্রি</h3>
+                <div id="withdrawal-history" class="space-y-3"></div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="page p-4">
+                <div class="flex items-center space-x-4 bg-white p-5 rounded-lg shadow mb-6">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user fa-2x text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <h3 id="profile-name" class="text-xl font-bold">লোড হচ্ছে...</h3>
+                        <p id="profile-email" class="text-gray-600">লোড হচ্ছে...</p>
+                    </div>
+                </div>
+
+                 <div class="bg-white p-5 rounded-lg shadow mb-6">
+                    <h4 class="font-semibold mb-2">আপনার রেফারেল কোড</h4>
+                    <div class="flex items-center bg-gray-100 p-2 rounded-md">
+                        <p id="referral-code" class="flex-grow font-mono text-lg">LOADING...</p>
+                        <button id="copy-referral-btn" class="px-3 py-1 bg-indigo-500 text-white text-sm rounded-md">কপি</button>
+                    </div>
+                 </div>
+
+                <div class="bg-white p-5 rounded-lg shadow">
+                    <h4 class="font-semibold mb-3">লেনদেনের ইতিহাস</h4>
+                    <div id="transaction-history" class="space-y-3 max-h-60 overflow-y-auto">
+                        <!-- History will be here -->
+                    </div>
+                </div>
+
+                <button id="logout-button" class="w-full mt-6 px-4 py-3 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">লগ আউট</button>
+            </div>
+        </main>
+        
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg flex justify-around">
+            <a href="#" class="nav-link nav-link-btn active flex-1 text-center py-3" data-page="home">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="block text-xs">হোম</span>
+            </a>
+            <a href="#" class="nav-link nav-link-btn flex-1 text-center py-3" data-page="tasks">
+                <i class="fas fa-tasks nav-icon"></i>
+                <span class="block text-xs">টাস্ক</span>
+            </a>
+            <a href="#" class="nav-link nav-link-btn flex-1 text-center py-3" data-page="withdraw">
+                <i class="fas fa-hand-holding-usd nav-icon"></i>
+                <span class="block text-xs">উইথড্র</span>
+            </a>
+            <a href="#" class="nav-link nav-link-btn flex-1 text-center py-3" data-page="profile">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="block text-xs">প্রোফাইল</span>
+            </a>
+        </nav>
+    </div>
     
-    <script type="module">
-        // Firebase স্ট্যান্ডার্ড ইমপোর্টস
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        // Firestore ডাটাবেস ইমপোর্ট
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-‎        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-‎        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-‎
-‎        // --- IMPORTANT: Firebase Configuration ---
-‎        const firebaseConfig = {
-‎            apiKey: "AIzaSyBHjAaLeK3oa1r7fjaM25ILmQ4g3oIeh6g",
-‎            authDomain: "epaperbd-5cd65.firebaseapp.com",
-‎            projectId: "epaperbd-5cd65",
-‎            storageBucket: "epaperbd-5cd65.firebasestorage.app",
-‎            messagingSenderId: "1087957180039",
-‎            appId: "1:1087957180039:web:3c89510a3653646a33a222"
-‎        };
-‎        
-‎        // Initialize Firebase
-‎        const fbApp = initializeApp(firebaseConfig);
-‎        const auth = getAuth(fbApp);
-‎        const db = getFirestore(fbApp);
-‎        const storage = getStorage(fbApp);
-        // গ্লোবাল ভ্যারিয়েবল যা এনভায়রনমেন্ট দ্বারা সরবরাহ করা হয়
-        // **এগুলো আপনার Firebase Configuration লোড করবে**
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'hkearn-default-app-id';
+    <!-- Task Completion Modal -->
+    <div id="task-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-40 p-4">
+        <div class="bg-white rounded-lg w-full max-w-lg p-6">
+            <h3 id="task-modal-title" class="text-xl font-bold mb-4"></h3>
+            <div id="task-modal-content"></div>
+            <div id="task-timer" class="text-center text-2xl font-bold my-4 text-indigo-600"></div>
+            <button id="claim-reward-btn" disabled class="w-full mt-4 px-4 py-3 font-semibold text-white bg-green-500 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed">
+                রিওয়ার্ড সংগ্রহ করুন
+            </button>
+             <button id="close-task-modal" class="w-full mt-2 px-4 py-2 font-semibold text-gray-700 bg-gray-200 rounded-md">বন্ধ করুন</button>
+        </div>
+    </div>
 
-        // 1. ইনিশিয়ালাইজেশন: Auth এবং Firestore ডাটাবেস
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, writeBatch, query, where, orderBy, addDoc, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // --- আপনার Firebase প্রজেক্টের কনফিগারেশন এখানে যোগ করুন ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_KJiMcn_UKslB-Y_Mpxq2XA6h-zxXygg",
+  authDomain: "hk-cash-316af.firebaseapp.com",
+  projectId: "hk-cash-316af",
+  storageBucket: "hk-cash-316af.firebasestorage.app",
+  messagingSenderId: "1012157922332",
+  appId: "1:1012157922332:web:b5485afd760901645ff3d9",
+};
+
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app); // <--- Firestore ডাটাবেস ইনিশিয়ালাইজ করা হলো
-
-        // Firebase ফাংশনগুলো গ্লোবাল স্কোপে এক্সপোর্ট করা হচ্ছে
-        window.firebase = {
-            auth, db, appId, initialAuthToken,
-            signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword,
-            signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification,
-            doc, setDoc, getDoc, updateDoc, onSnapshot
-        };
-        
-        // Firebase প্রস্তুত সংকেত
-        document.dispatchEvent(new Event('firebase-ready'));
-    </script>
-
-    <!-- প্রধান অ্যাপ্লিকেশন লজিক -->
-    <script>
-        document.addEventListener('firebase-ready', async () => {
-            const { auth, db, appId, initialAuthToken, signInAnonymously, signInWithCustomToken, 
-                onAuthStateChanged, doc, setDoc, updateDoc, onSnapshot, sendEmailVerification } = window.firebase;
-
-            // --- স্টেট ম্যানেজমেন্ট ---
-            let isAuthenticated = false;
-            let userId = null;
-            let userProfile = null;
-            let currentView = 'splash';
-            let systemConfig = {};
-            let currentLang = 'bn'; // ডিফল্ট ভাষা বাংলা সেট করা হলো
-
-            const appContainer = document.getElementById('app-container');
-
-            // --- লোকালইজেশন (BN/EN) ---
-            const translations = {
-                en: {
-                    appName: "HKEARN", welcome: "Welcome", backToDash: "Back to Dashboard", 
-                    loginTitle: "Welcome Back", signupTitle: "Join HKEARN", email: "Email", password: "Password", 
-                    loginBtn: "Login", signupBtn: "Sign Up", noAccount: "Don't have an account?", 
-                    haveAccount: "Already have an account?", loading: "Loading...",
-                    // Dashboard
-                    balance: "Current Balance", vipLevel: "VIP Level", taskATitle: "A Task (Ad/Video)", 
-                    taskVTitle: "V Task (Social Follow)", taskSTitle: "S Task (Survey)", 
-                    vipUpgradeTitle: "Upgrade VIP", withdrawTitle: "Withdraw", profileTitle: "Profile & Settings",
-                    referTitle: "Refer & Earn",
-                    // Tasks
-                    startTask: "Start Task", watch: "Watching...", complete: "Completed!", 
-                    pts: "Pts", taskReward: "Reward", copy: "Copy", copied: "Copied!",
-                    // Referral
-                    referHeader: "Refer Friends", referInfo: "Share your unique referral code and link to earn commission when friends join and upgrade VIP!",
-                    yourCode: "Your Referral Code", shareLink: "Share Link",
-                    // VIP
-                    upgradeVipHeader: "Upgrade to VIP", vipInfo: "To upgrade your VIP status and unlock higher earning tasks, please send the required amount to the Admin's Bkash/Nagad number below and submit the transaction ID (TxnID) for verification.",
-                    adminPhone: "Admin Payment Number", paymentMethod: "Payment Method", amountSent: "Amount Sent (BDT)",
-                    txnId: "Transaction ID (TxnID)", submitRequest: "Submit Verification Request",
-                    bkash: "Bkash", nagad: "Nagad",
-                    // Withdraw
-                    withdrawHeader: "Request Withdrawal", minWithdraw: "Minimum Withdrawal", accountNumber: "Account Number",
-                    withdrawAmount: "Amount to Withdraw", requestWithdraw: "Request Withdrawal", insufficient: "Insufficient balance.",
-                    // Profile
-                    userProfile: "User Profile", editProfile: "Edit Profile", displayName: "Display Name", 
-                    saveChanges: "Save Changes", appInfo: "App Information", appVersion: "App Version", 
-                    yourIP: "Your IP", privacyPolicy: "Privacy Policy", contactUs: "Contact Us",
-                    logout: "Logout", themeSetting: "Theme Setting", securitySetting: "Security Setting", 
-                    changePass: "Change Password",
-                    // Messages
-                    verificationSent: "Verification link sent to your email! Please check your inbox and log in after verification.",
-                    profileUpdated: "Profile updated successfully!",
-                    requestSubmitted: "Request submitted successfully! It will be processed soon.",
-                    failedRequest: "Failed to submit request. Please try again.",
-                    minWithdrawalError: "Minimum withdrawal is ",
-                    ipFetching: "Fetching...",
-                },
-                bn: {
-                    appName: "এইচকেআর্ন", welcome: "স্বাগতম", backToDash: "ড্যাশবোর্ডে ফিরে যান", 
-                    loginTitle: "আবার স্বাগতম", signupTitle: "এইচকেআর্নে যোগ দিন", email: "ইমেল", password: "পাসওয়ার্ড", 
-                    loginBtn: "লগইন", signupBtn: "সাইন আপ", noAccount: "একাউন্ট নেই?", 
-                    haveAccount: "ইতিমধ্যে একাউন্ট আছে?", loading: "লোড হচ্ছে...",
-                    // Dashboard
-                    balance: "বর্তমান ব্যালেন্স", vipLevel: "ভিআইপি লেভেল", taskATitle: "এ টাস্ক (বিজ্ঞাপন/ভিডিও)", 
-                    taskVTitle: "ভি টাস্ক (সোশ্যাল ফলো)", taskSTitle: "এস টাস্ক (সার্ভে)", 
-                    vipUpgradeTitle: "ভিআইপি আপগ্রেড", withdrawTitle: "উইথড্র", profileTitle: "প্রোফাইল ও সেটিংস",
-                    referTitle: "রেফার ও আয় করুন",
-                    // Tasks
-                    startTask: "টাস্ক শুরু করুন", watch: "দেখা হচ্ছে...", complete: "সম্পূর্ণ!", 
-                    pts: "পয়েন্ট", taskReward: "পুরস্কার", copy: "কপি করুন", copied: "কপি হয়েছে!",
-                    // Referral
-                    referHeader: "বন্ধুদের রেফার করুন", referInfo: "আপনার অনন্য রেফারেল কোড এবং লিঙ্ক শেয়ার করুন যখন বন্ধুরা যোগদান করবে এবং ভিআইপি আপগ্রেড করবে তখন কমিশন উপার্জন করুন!",
-                    yourCode: "আপনার রেফারেল কোড", shareLink: "শেয়ার লিঙ্ক",
-                    // VIP
-                    upgradeVipHeader: "ভিআইপি-তে আপগ্রেড করুন", vipInfo: "আপনার ভিআইপি স্ট্যাটাস আপগ্রেড করতে এবং বেশি উপার্জনের টাস্ক আনলক করতে, দয়া করে নীচের অ্যাডমিনের বিকাশ/নগদ নম্বরে প্রয়োজনীয় পরিমাণ টাকা পাঠান এবং যাচাইকরণের জন্য ট্রানজেকশন আইডি (TxnID) জমা দিন।",
-                    adminPhone: "অ্যাডমিন পেমেন্ট নম্বর", paymentMethod: "পেমেন্ট পদ্ধতি", amountSent: "প্রেরিত পরিমাণ (BDT)",
-                    txnId: "ট্রানজেকশন আইডি (TxnID)", submitRequest: "যাচাইকরণের অনুরোধ জমা দিন",
-                    bkash: "বিকাশ", nagad: "নগদ",
-                    // Withdraw
-                    withdrawHeader: "উইথড্র অনুরোধ করুন", minWithdraw: "সর্বনিম্ন উইথড্র", accountNumber: "একাউন্ট নম্বর",
-                    withdrawAmount: "উইথড্র করার পরিমাণ", requestWithdraw: "উইথড্র অনুরোধ করুন", insufficient: "অপর্যাপ্ত ব্যালেন্স।",
-                    // Profile
-                    userProfile: "ইউজার প্রোফাইল", editProfile: "প্রোফাইল সম্পাদনা", displayName: "প্রদর্শন নাম",
-                    saveChanges: "পরিবর্তন সংরক্ষণ করুন", appInfo: "অ্যাপ্লিকেশন তথ্য", appVersion: "অ্যাপ ভার্সন",
-                    yourIP: "আপনার আইপি", privacyPolicy: "গোপনীয়তা নীতি", contactUs: "যোগাযোগ করুন",
-                    logout: "লগ আউট", themeSetting: "থিম সেটিং", securitySetting: "নিরাপত্তা সেটিং", 
-                    changePass: "পাসওয়ার্ড পরিবর্তন",
-                    // Messages
-                    verificationSent: "আপনার ইমেলে যাচাইকরণ লিঙ্ক পাঠানো হয়েছে! দয়া করে আপনার ইনবক্স চেক করুন এবং যাচাইকরণের পর লগইন করুন।",
-                    profileUpdated: "প্রোফাইল সফলভাবে আপডেট করা হয়েছে!",
-                    requestSubmitted: "অনুরোধ সফলভাবে জমা হয়েছে! এটি শীঘ্রই প্রক্রিয়া করা হবে।",
-                    failedRequest: "অনুরোধ জমা দিতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
-                    minWithdrawalError: "সর্বনিম্ন উইথড্র হলো ",
-                    ipFetching: "সন্ধান করা হচ্ছে...",
-                }
-            };
-
-            const T = (key) => translations[currentLang][key] || key;
-
-            const setLanguage = (lang) => {
-                currentLang = lang;
-                renderView();
-            };
-
-            // --- ইউটিলিটিজ ---
-
-            const copyToClipboard = (text, elementId) => {
-                const tempInput = document.createElement('textarea');
-                tempInput.value = text;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                try {
-                    document.execCommand('copy');
-                    const btn = document.getElementById(elementId);
-                    if (btn) {
-                        btn.innerHTML = T('copied');
-                        setTimeout(() => btn.innerHTML = T('copy'), 2000);
-                    }
-                    showMessage(T('copied'), 'success');
-                } catch (err) {
-                    console.error('কপি ব্যর্থ হয়েছে:', err);
-                    showMessage('টেক্সট কপি করা যায়নি।', 'error');
-                }
-                document.body.removeChild(tempInput);
-            };
-            window.copyToClipboard = copyToClipboard; // গ্লোবালি এক্সপোজ করা হলো
-
-            const showMessage = (msg, type = 'success') => {
-                const existingMsg = document.getElementById('app-message');
-                if (existingMsg) existingMsg.remove();
-                
-                const color = type === 'success' ? 'bg-green-500/50' : 'bg-red-500/50';
-                const html = `
-                    <div id="app-message" class="fixed top-4 right-4 p-4 rounded-xl text-white font-semibold shadow-lg z-50 transition-opacity duration-300 ${color}">
-                        ${msg}
-                    </div>
-                `;
-                document.body.insertAdjacentHTML('beforeend', html);
-                setTimeout(() => {
-                    const el = document.getElementById('app-message');
-                    if (el) el.remove();
-                }, 5000);
-            };
-
-            const generateMockUid = () => {
-                // ৬-সংখ্যার র্যান্ডম নম্বর স্ট্রিং (রেফারেল কোড হিসাবে ব্যবহৃত)
-                return String(Math.floor(100000 + Math.random() * 900000));
-            };
-            
-            const LoadingSpinner = () => `
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            `;
-
-            // --- ভিউ কম্পোনেন্টস (HTML টেমপ্লেট) ---
-
-            const renderGlassCard = (content, title = '', className = '', clickHandler = '') => {
-                return `
-                    <div 
-                        class="glass-card p-4 sm:p-6 lg:p-8 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-inner ${clickHandler ? 'cursor-pointer' : ''} ${className}"
-                        ${clickHandler ? `onclick="${clickHandler}"` : ''}
-                    >
-                        ${title ? `<h3 class="text-xl font-bold mb-4 text-white">${title}</h3>` : ''}
-                        ${content}
-                    </div>
-                `;
-            };
-
-            const renderAdPlaceholder = (type) => `
-                <div class="w-full ${type === 'banner' ? 'h-16' : 'h-64'} my-4 bg-red-600/30 border border-red-500/50 rounded-xl flex items-center justify-center text-white text-sm font-semibold text-center">
-                    ${type.toUpperCase()} AD Placeholder (Admin ID: ${type === 'banner' ? systemConfig.admobBannerId || 'N/A' : systemConfig.admobInterstitialId || 'N/A'})
-                </div>
-            `;
-            
-            // --- ২. স্প্ল্যাশ স্ক্রিন ---
-            const renderSplashScreen = () => `
-                <div class="fixed inset-0 flex flex-col items-center justify-center bg-gray-900/90 z-50">
-                    <div class="text-8xl mb-4 animate-bounce">
-                        <span role="img" aria-label="HKEARN Logo">💰</span>
-                    </div>
-                    <h1 class="text-5xl font-extrabold tracking-widest text-white">${T('appName')}</h1>
-                    <div class="flex items-center mt-6 text-white">${LoadingSpinner()} ${T('loading')}</div>
-                </div>
-            `;
-
-            // --- ৩. অথ ভিউ ---
-            const renderAuth = (isLogin = true, error = '') => {
-                const content = `
-                    <div class="w-full max-w-md mx-auto p-4 sm:p-0">
-                        ${renderGlassCard(`
-                            <h1 class="text-3xl font-extrabold text-white mb-6 text-center">${isLogin ? T('loginTitle') : T('signupTitle')}</h1>
-                            
-                            <form id="auth-form" class="space-y-4">
-                                <input type="email" id="auth-email" placeholder="${T('email')}" required 
-                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/70 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                                <input type="password" id="auth-password" placeholder="${T('password')}" required 
-                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/70 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-
-                                ${error ? `<p class="text-red-300 text-sm mt-2">${error}</p>` : ''}
-                                
-                                <button type="submit" id="auth-submit-btn" class="w-full py-3 mt-4 text-lg font-bold rounded-xl text-white transition-all duration-300
-                                    bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/50">
-                                    ${isLogin ? T('loginBtn') : T('signupBtn')}
-                                </button>
-                            </form>
-
-                            <p class="text-center text-white/70 mt-6 text-sm">
-                                ${isLogin ? T('noAccount') : T('haveAccount')}
-                                <button onclick="window.renderAuth(!${isLogin})" class="text-blue-300 hover:text-blue-100 font-semibold transition-colors">
-                                    ${isLogin ? T('signupBtn') : T('loginBtn')}
-                                </button>
-                            </p>
-                        `, '', 'mx-auto')}
-                    </div>
-                `;
-                appContainer.innerHTML = content;
-                attachAuthHandlers(isLogin);
-            };
-            window.renderAuth = renderAuth; // গ্লোবালি এক্সপোজ করা হলো
-
-            const attachAuthHandlers = (isLogin) => {
-                document.getElementById('auth-form').onsubmit = async (e) => {
-                    e.preventDefault();
-                    const email = document.getElementById('auth-email').value;
-                    const password = document.getElementById('auth-password').value;
-                    const btn = document.getElementById('auth-submit-btn');
-                    btn.disabled = true;
-                    btn.innerHTML = `${LoadingSpinner()} ${T('loading')}`;
-
-                    try {
-                        let userCredential;
-                        if (isLogin) {
-                            userCredential = await window.firebase.signInWithEmailAndPassword(auth, email, password);
-                            if (!userCredential.user.emailVerified) {
-                                await sendEmailVerification(userCredential.user);
-                                showMessage(T('verificationSent'), 'error');
-                                await window.firebase.signOut(auth);
-                                renderAuth(true, 'লগইন করার আগে দয়া করে আপনার ইমেল যাচাই করুন। যাচাইকরণ লিঙ্ক পুনরায় পাঠানো হয়েছে।');
-                                return;
-                            }
-                        } else {
-                            userCredential = await window.firebase.createUserWithEmailAndPassword(auth, email, password);
-                            await sendEmailVerification(userCredential.user);
-                            
-                            // সাইনআপে বেস প্রোফাইল তৈরি করা (Firestore এ ডেটা সংরক্ষণ)
-                            // ব্যক্তিগত ডেটা পাথ: /artifacts/{appId}/users/{userId}/profile/data
-                            const userDocRef = doc(db, `/artifacts/${appId}/users/${userCredential.user.uid}/profile/data`);
-                            await setDoc(userDocRef, {
-                                email: userCredential.user.email,
-                                displayName: userCredential.user.email.split('@')[0],
-                                balance: 0,
-                                vipLevel: 0,
-                                // ৬-সংখ্যার র্যান্ডম নম্বর UID/Referral Code হিসাবে
-                                uid: generateMockUid(), 
-                                createdAt: Date.now(),
-                                profilePhotoUrl: 'https://placehold.co/100x100/3b82f6/ffffff?text=P',
-                            });
-
-                            showMessage(T('verificationSent'), 'success');
-                            renderAuth(true); // লগইনে পরিবর্তন
-                            return;
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        const errorMsg = err.message.replace('Firebase: ', 'ফায়ারবেস এরর: ');
-                        renderAuth(isLogin, errorMsg);
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerHTML = isLogin ? T('loginBtn') : T('signupBtn');
-                    }
-                };
-            };
-            
-            // --- ৪. টাস্ক ভিউ লজিক ---
-            const handleTaskCompletion = async (taskId, reward) => {
-                if (!userId || !userProfile) return;
-                try {
-                    // Firestore এ ব্যালেন্স আপডেট
-                    const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/profile/data`);
-                    await updateDoc(userDocRef, {
-                        balance: userProfile.balance + reward
-                    });
-                    showMessage(`${T('complete')} +${reward} ${T('pts')}`, 'success');
-                } catch (error) {
-                    console.error("ব্যালেন্স আপডেটে এরর:", error);
-                    showMessage(T('failedRequest'), 'error');
-                }
-            };
-
-            const renderTaskCard = (task, type) => {
-                // টাস্ক কাউন্টডাউন লজিক
-                window[`startTask${task.id}`] = (initialTime) => {
-                    let time = initialTime;
-                    const btn = document.getElementById(`btn-${task.id}`);
-                    btn.disabled = true;
-                    btn.classList.add('bg-yellow-600/50', 'animate-pulse');
-                    
-                    const interval = setInterval(() => {
-                        if (time <= 0) {
-                            clearInterval(interval);
-                            btn.innerHTML = `${T('complete')} +${task.reward} ${T('pts')}`;
-                            btn.classList.remove('bg-yellow-600/50', 'animate-pulse');
-                            btn.classList.add('bg-green-600/50');
-                            btn.onclick = null;
-                            handleTaskCompletion(task.id, task.reward);
-                        } else {
-                            btn.innerHTML = `${T('watch')} ${time}s`;
-                            time--;
-                        }
-                    }, 1000);
-
-                    // সোশ্যাল টাস্কের জন্য লিঙ্ক ওপেন
-                    if (task.type === 'V Task' && task.link) window.open(task.link, '_blank');
-                };
-
-                return renderGlassCard(`
-                    <div class="flex items-center justify-between p-2 !py-2">
-                        <div>
-                            <h4 class="text-lg font-semibold text-white">${task.name}</h4>
-                            <p class="text-sm text-white/70">${type} | ${T('taskReward')}: ${task.reward} ${T('pts')}</p>
-                            ${task.vipRequired > userProfile.vipLevel ? `<p class="text-xs text-red-300 font-bold mt-1">VIP Lvl ${task.vipRequired} Required</p>` : ''}
-                        </div>
-                        <button
-                            id="btn-${task.id}"
-                            onclick="window.startTask${task.id}(${task.timeLimit})"
-                            class="px-4 py-2 rounded-xl text-sm font-semibold transition-colors
-                                ${task.vipRequired > userProfile.vipLevel ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}"
-                            ${task.vipRequired > userProfile.vipLevel ? 'disabled' : ''}
-                        >
-                            ${T('startTask')}
-                        </button>
-                    </div>
-                `, '', 'mb-4', '');
-            };
-
-            const renderTaskView = (title, tasks, type) => {
-                const taskCards = tasks.map(task => renderTaskCard(task, type)).join('');
-
-                const content = `
-                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
-                        ${T('backToDash')}
-                    </button>
-                    <h2 class="text-3xl font-bold text-white mb-6 border-b border-white/20 pb-2">${title}</h2>
-                    ${renderAdPlaceholder('banner')}
-                    <div class="lg:grid lg:grid-cols-2 lg:gap-6">
-                        ${taskCards}
-                    </div>
-                    ${renderAdPlaceholder('interstitial')}
-                `;
-                appContainer.innerHTML = content;
-            };
-
-            // --- ৫. নেভিগেশন/রাউটিং ---
-            
-            const renderView = (view = currentView) => {
-                currentView = view;
-                // টাস্ক তালিকা (এডমিন কন্ট্রোলড)
-                let tasks = []; 
-                if (userProfile) {
-                    tasks = [
-                        { id: 'a1', name: 'Watch Ad #1 (5s)', type: 'A Task', timeLimit: 5, reward: 2, vipRequired: 0 },
-                        { id: 'a2', name: 'Watch Ad #2 (10s)', type: 'A Task', timeLimit: 10, reward: 5, vipRequired: 0 },
-                        { id: 'a3', name: 'VIP Video Task (15s)', type: 'A Task', timeLimit: 15, reward: 15, vipRequired: 1 },
-                        { id: 'v1', name: 'Subscribe YouTube', type: 'V Task', timeLimit: 15, reward: 10, link: 'https://youtube.com/channel', vipRequired: 0 },
-                        { id: 'v2', name: 'Follow Facebook Page', type: 'V Task', timeLimit: 10, reward: 7, link: 'https://facebook.com/page', vipRequired: 0 },
-                        { id: 's1', name: 'Complete Short Survey', type: 'S Task', timeLimit: 30, reward: 20, vipRequired: 0 },
-                        { id: 's2', name: 'High Value Survey', type: 'S Task', timeLimit: 60, reward: 50, vipRequired: 2 },
-                    ];
-                }
-
-                switch (view) {
-                    case 'splash':
-                        appContainer.innerHTML = renderSplashScreen();
-                        setTimeout(() => {
-                            if (isAuthenticated) {
-                                renderView('dashboard');
-                            } else {
-                                renderView('auth');
-                            }
-                        }, 3000);
-                        break;
-                    case 'auth':
-                        renderAuth(true);
-                        break;
-                    case 'dashboard':
-                        appContainer.innerHTML = renderDashboard();
-                        break;
-                    case 'A_TASK':
-                        renderTaskView(T('taskATitle'), tasks.filter(t => t.type === 'A Task'), 'Ad/Video');
-                        break;
-                    case 'V_TASK':
-                        renderTaskView(T('taskVTitle'), tasks.filter(t => t.type === 'V Task'), 'Social Media');
-                        break;
-                    case 'S_TASK':
-                        renderTaskView(T('taskSTitle'), tasks.filter(t => t.type === 'S Task'), 'Survey');
-                        break;
-                    case 'VIP_UPGRADE':
-                        appContainer.innerHTML = renderVIPUpgrade();
-                        attachVIPHandlers();
-                        break;
-                    case 'WITHDRAW':
-                        appContainer.innerHTML = renderWithdraw();
-                        attachWithdrawHandlers();
-                        break;
-                    case 'PROFILE_SETTINGS':
-                        appContainer.innerHTML = renderProfileSettings(false);
-                        attachProfileHandlers();
-                        break;
-                    case 'REFER':
-                        appContainer.innerHTML = renderReferralView();
-                        break;
-                }
-            };
-            window.setView = renderView;
-
-            // --- ৬. ড্যাশবোর্ড ভিউ ---
-            const renderDashboard = () => {
-                const { balance, vipLevel, displayName, profilePhotoUrl, uid } = userProfile;
-                
-                const headerCard = renderGlassCard(`
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <img src="${profilePhotoUrl}" alt="Profile" class="h-12 w-12 rounded-full object-cover border-2 border-white/50" />
-                            <div class="ml-3">
-                                <h2 class="text-xl font-bold text-white">${T('welcome')}, ${displayName}!</h2>
-                                <p class="text-sm text-white/70">UID: ${uid}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-semibold text-white/80">${T('balance')}</p>
-                            <p class="text-3xl font-extrabold text-green-300">${balance.toFixed(2)}</p>
-                            <p class="text-xs font-bold ${vipLevel > 0 ? 'text-yellow-400' : 'text-red-400'}">
-                                ${T('vipLevel')}: Lvl ${vipLevel}
-                            </p>
-                        </div>
-                    </div>
-                `, '', 'mb-8 p-4');
-
-                const navItems = [
-                    { name: T('taskATitle'), view: 'A_TASK', color: 'bg-indigo-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>' },
-                    { name: T('taskVTitle'), view: 'V_TASK', color: 'bg-pink-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2h-7a2 2 0 01-2-2V5z" /></svg>' },
-                    { name: T('taskSTitle'), view: 'S_TASK', color: 'bg-cyan-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM7 11a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>' },
-                    { name: T('vipUpgradeTitle'), view: 'VIP_UPGRADE', color: 'bg-yellow-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.696h3.462c.969 0 1.371 1.24.588 1.81l-2.817 2.036a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.817-2.036a1 1 0 00-1.175 0l-2.817 2.036c-.785.57-1.84-.197-1.54-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.725c-.783-.57-.381-1.81.588-1.81h3.461a1 1 0 00.951-.696l1.07-3.292z" /></svg>' },
-                    { name: T('withdrawTitle'), view: 'WITHDRAW', color: 'bg-green-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 9.586V6z" clip-rule="evenodd" /></svg>' },
-                    { name: T('referTitle'), view: 'REFER', color: 'bg-orange-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 00-2 2v6H2a2 2 0 00-2 2v2a2 2 0 002 2h16a2 2 0 002-2v-2a2 2 0 00-2-2h-1V6a2 2 0 00-2-2H5zm3 2a1 1 0 011-1h2a1 1 0 011 1v1H8V6zm-3 5h10V8H5v3z" /></svg>' },
-                    { name: T('profileTitle'), view: 'PROFILE_SETTINGS', color: 'bg-blue-600', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.98 5.98 0 0010 16a5.979 5.979 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" /></svg>' },
-                ];
-
-                const navGrid = navItems.map(item => `
-                    <div 
-                        onclick="window.setView('${item.view}')"
-                        class="glass-card flex flex-col items-center justify-center text-center p-4 h-32 hover:border-blue-400/50 cursor-pointer transition duration-300"
-                    >
-                        <div class="text-white mb-2">${item.icon}</div>
-                        <p class="text-sm font-semibold text-white">${item.name}</p>
-                    </div>
-                `).join('');
-                
-                // ভাষা পরিবর্তনকারী
-                const langSwitcher = `
-                    <div class="absolute top-4 right-4 z-20">
-                        <button onclick="setLanguage('en')" class="text-sm font-semibold px-3 py-1 rounded-l-full ${currentLang === 'en' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/70'}">EN</button>
-                        <button onclick="setLanguage('bn')" class="text-sm font-semibold px-3 py-1 rounded-r-full ${currentLang === 'bn' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/70'}">BN</button>
-                    </div>
-                `;
-
-                return `
-                    ${langSwitcher}
-                    ${renderAdPlaceholder('banner')}
-                    ${headerCard}
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        ${navGrid}
-                    </div>
-                    ${renderAdPlaceholder('interstitial')}
-                `;
-            };
-
-            // --- ৭. রেফারেল ভিউ ---
-            const renderReferralView = () => {
-                const referralCode = userProfile.uid; // ৬-সংখ্যার UID রেফারেল কোড হিসাবে ব্যবহৃত
-                const appName = T('appName');
-                // মক লিঙ্ক
-                const shareUrl = `https://hkearn.app/signup?ref=${referralCode}`; 
-                
-                return `
-                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
-                        ${T('backToDash')}
-                    </button>
-                    ${renderGlassCard(`
-                        <p class="text-white/80 mb-6">${T('referInfo')}</p>
-
-                        <!-- রেফারেল কোড কার্ড -->
-                        <div class="glass-card bg-indigo-700/30 p-4 mb-6 border-indigo-500/50">
-                            <label class="block text-indigo-300 font-semibold mb-2">${T('yourCode')} (${appName})</label>
-                            <div class="flex items-center justify-between">
-                                <p class="text-3xl font-mono font-extrabold text-white tracking-widest">${referralCode}</p>
-                                <button id="copy-code-btn" onclick="window.copyToClipboard('${referralCode}', 'copy-code-btn')" 
-                                    class="px-4 py-2 rounded-xl text-sm font-bold bg-white/20 hover:bg-white/30 transition-colors">
-                                    ${T('copy')}
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- শেয়ার লিঙ্ক কার্ড -->
-                        <div class="glass-card bg-green-700/30 p-4 border-green-500/50">
-                            <label class="block text-green-300 font-semibold mb-2">${T('shareLink')}</label>
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm font-mono text-white/80 truncate mr-4">${shareUrl}</p>
-                                <button id="copy-link-btn" onclick="window.copyToClipboard('${shareUrl}', 'copy-link-btn')" 
-                                    class="px-4 py-2 rounded-xl text-sm font-bold bg-white/20 hover:bg-white/30 transition-colors flex-shrink-0">
-                                    ${T('copy')}
-                                </button>
-                            </div>
-                        </div>
-                        
-                    `, T('referHeader'), 'max-w-xl mx-auto')}
-                `;
-            };
-
-            // --- ৮. ভিআইপি আপগ্রেড ভিউ ---
-            const renderVIPUpgrade = () => {
-                const adminPhoneNumber = systemConfig.adminPhone || '+88017xxxxxxxx'; // অ্যাডমিন নিয়ন্ত্রিত
-                return `
-                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
-                        ${T('backToDash')}
-                    </button>
-                    ${renderGlassCard(`
-                        <p class="text-white/80 mb-4">${T('vipInfo')}</p>
-
-                        <div class="bg-blue-900/50 p-3 rounded-xl mb-6 border border-blue-500/50">
-                            <p class="font-semibold text-blue-300">${T('adminPhone')}:</p>
-                            <p class="text-xl font-bold text-white">${adminPhoneNumber}</p>
-                        </div>
-
-                        <form id="vip-form" class="space-y-4">
-                            <div>
-                                <label class="block text-white/80 mb-1">${T('paymentMethod')}</label>
-                                <select id="vip-method" required class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                                    <option value="bkash" class="bg-gray-800 text-white">${T('bkash')} (Manual)</option>
-                                    <option value="nagad" class="bg-gray-800 text-white">${T('nagad')} (Manual)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-white/80 mb-1">${T('amountSent')}</label>
-                                <input type="number" id="vip-amount" placeholder="e.g., 500" required min="10" 
-                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block text-white/80 mb-1">${T('txnId')}</label>
-                                <input type="text" id="vip-txn-id" placeholder="${T('txnId')}" required 
-                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-
-                            <button type="submit" id="vip-submit-btn" class="w-full py-3 mt-4 text-lg font-bold rounded-xl text-white transition-all duration-300
-                                bg-green-600 hover:bg-green-700 shadow-lg shadow-green-500/50">
-                                ${T('submitRequest')}
-                            </button>
-                        </form>
-                    `, T('upgradeVipHeader'), 'max-w-xl mx-auto')}
-                `;
-            };
-
-            const attachVIPHandlers = () => {
-                document.getElementById('vip-form').onsubmit = async (e) => {
-                    e.preventDefault();
-                    const amount = parseFloat(document.getElementById('vip-amount').value);
-                    const method = document.getElementById('vip-method').value;
-                    const txnId = document.getElementById('vip-txn-id').value;
-                    const btn = document.getElementById('vip-submit-btn');
-
-                    btn.disabled = true;
-                    btn.innerHTML = `${LoadingSpinner()} ${T('loading')}`;
-
-                    try {
-                        // Firestore: অ্যাডমিন পর্যালোচনার জন্য পাবলিক কালেকশনে অনুরোধ সংরক্ষণ
-                        // পাবলিক ডেটা পাথ: /artifacts/{appId}/public/data/upgradeRequests
-                        const requestRef = doc(db, `/artifacts/${appId}/public/data/upgradeRequests`, `req_${Date.now()}`);
-                        await setDoc(requestRef, {
-                            userId: userId,
-                            amount: amount,
-                            method: method,
-                            txnId: txnId,
-                            status: 'Pending',
-                            timestamp: Date.now(),
-                            userEmail: userProfile.email,
-                            uid: userProfile.uid,
-                        });
-                        showMessage(T('requestSubmitted'), 'success');
-                        document.getElementById('vip-form').reset();
-                    } catch (error) {
-                        console.error("ভিআইপি অনুরোধ জমা দেওয়ায় এরর:", error);
-                        showMessage(T('failedRequest'), 'error');
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerHTML = T('submitRequest');
-                    }
-                };
-            };
-            
-            // --- ৯. উইথড্র ভিউ ---
-            const renderWithdraw = () => {
-                const minWithdrawal = systemConfig.minWithdrawal || 100; // অ্যাডমিন নিয়ন্ত্রিত
-                return `
-                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
-                        ${T('backToDash')}
-                    </button>
-                    ${renderGlassCard(`
-                        <div class="bg-green-900/50 p-3 rounded-xl mb-6 border border-green-500/50">
-                            <p class="font-semibold text-green-300">${T('balance')}:</p>
-                            <p class="text-3xl font-bold text-white">${userProfile.balance.toFixed(2)} ${T('pts')}</p>
-                            <p class="text-sm text-white/70 mt-1">${T('minWithdraw')}: ${minWithdrawal} ${T('pts')}</p>
-                        </div>
-
-                        <form id="withdraw-form" class="space-y-4">
-                            <div>
-                                <label class="block text-white/80 mb-1">${T('paymentMethod')}</label>
-                                <select id="withdraw-method" required class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                                    <option value="bkash" class="bg-gray-800 text-white">${T('bkash')} Personal</option>
-                                    <option value="nagad" class="bg-gray-800 text-white">${T('nagad')} Personal</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-white/80 mb-1">${T('accountNumber')}</label>
-                                <input type="text" id="withdraw-account" placeholder="১১-সংখ্যার অ্যাকাউন্ট নম্বর লিখুন" required minLength="11" maxLength="11"
-                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block text-white/80 mb-1">${T('withdrawAmount')} (${T('pts')})</label>
-                                <input type="number" id="withdraw-amount" placeholder="${T('minWithdraw')} ${minWithdrawal}" required min="${minWithdrawal}" max="${userProfile.balance}"
-                                    class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-
-                            <button type="submit" id="withdraw-submit-btn" class="w-full py-3 mt-4 text-lg font-bold rounded-xl text-white transition-all duration-300
-                                bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-500/50">
-                                ${T('requestWithdraw')}
-                            </button>
-                        </form>
-                    `, T('withdrawHeader'), 'max-w-xl mx-auto')}
-                `;
-            };
-
-            const attachWithdrawHandlers = () => {
-                document.getElementById('withdraw-form').onsubmit = async (e) => {
-                    e.preventDefault();
-                    const amount = parseFloat(document.getElementById('withdraw-amount').value);
-                    const method = document.getElementById('withdraw-method').value;
-                    const account = document.getElementById('withdraw-account').value;
-                    const minWithdrawal = systemConfig.minWithdrawal || 100;
-                    const btn = document.getElementById('withdraw-submit-btn');
-
-                    if (amount < minWithdrawal) {
-                        showMessage(`${T('minWithdrawalError')} ${minWithdrawal} ${T('pts')}.`, 'error');
-                        return;
-                    }
-
-                    if (amount > userProfile.balance) {
-                        showMessage(T('insufficient'), 'error');
-                        return;
-                    }
-
-                    btn.disabled = true;
-                    btn.innerHTML = `${LoadingSpinner()} ${T('loading')}`;
-
-                    try {
-                        // ১. সাথে সাথে ব্যালেন্স কাটা (Firestore আপডেট)
-                        const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/profile/data`);
-                        await updateDoc(userDocRef, {
-                            balance: userProfile.balance - amount
-                        });
-
-                        // ২. অ্যাডমিনের জন্য উইথড্রয়াল অনুরোধ তৈরি (Firestore পাবলিক কালেকশন)
-                        // পাবলিক ডেটা পাথ: /artifacts/{appId}/public/data/withdrawalRequests
-                        const requestRef = doc(db, `/artifacts/${appId}/public/data/withdrawalRequests`, `req_${Date.now()}`);
-                        await setDoc(requestRef, {
-                            userId: userId,
-                            amount: amount,
-                            method: method,
-                            account: account,
-                            status: 'Pending',
-                            timestamp: Date.now(),
-                            userEmail: userProfile.email,
-                            uid: userProfile.uid,
-                        });
-
-                        showMessage(T('requestSubmitted'), 'success');
-                        document.getElementById('withdraw-form').reset();
-                    } catch (error) {
-                        console.error("উইথড্রয়াল অনুরোধ জমা দেওয়ায় এরর:", error);
-                        showMessage(T('failedRequest'), 'error');
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerHTML = T('requestWithdraw');
-                    }
-                };
-            };
-
-            // --- ১০. প্রোফাইল এবং সেটিংস ভিউ ---
-
-            const renderProfileSettings = (isEditing) => {
-                const { displayName, email, uid, vipLevel, profilePhotoUrl } = userProfile;
-                
-                const profileDetails = `
-                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                        <div class="relative">
-                            <img src="${profilePhotoUrl}" alt="Profile" class="h-24 w-24 rounded-full object-cover border-4 border-white/50 shadow-lg"/>
-                            <button onclick="showMessage('ছবি আপলোডের জন্য Firebase Storage প্রয়োজন (প্লেসহোল্ডার)।')" class="absolute bottom-0 right-0 bg-blue-500 p-1 rounded-full hover:bg-blue-600 transition-colors" title="ছবি আপলোড">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>
-                            </button>
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-white">${displayName}</p>
-                            <p class="text-white/70">${email}</p>
-                            <p class="text-lg font-mono text-yellow-300 mt-2">UID: ${uid}</p>
-                            <p class="text-sm font-semibold mt-1 ${vipLevel > 0 ? 'text-green-400' : 'text-red-400'}">${T('vipLevel')}: Lvl ${vipLevel}</p>
-                        </div>
-                    </div>
-                `;
-
-                const editForm = `
-                    <form id="edit-profile-form" class="space-y-4">
-                        <div>
-                            <label class="block text-white/80 mb-1">${T('displayName')}</label>
-                            <input type="text" id="edit-display-name" value="${displayName}" required
-                                class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                        </div>
-                        <button type="submit" id="profile-save-btn" class="w-full py-3 font-bold rounded-xl text-white transition-all duration-300
-                            bg-blue-600 hover:bg-blue-700">
-                            ${T('saveChanges')}
-                        </button>
-                    </form>
-                `;
-
-                const settings = `
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-white/80 mb-1">${T('themeSetting')}</label>
-                            <select class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                                <option class="bg-gray-800 text-white">Dark Glass (বর্তমান)</option>
-                                <option class="bg-gray-800 text-white">Light Glass (প্লেসহোল্ডার)</option>
-                            </select>
-                        </div>
-                        <div class="pt-2 border-t border-white/10">
-                            <h4 class="text-white font-semibold mb-2">${T('securitySetting')}</h4>
-                            <button onclick="showMessage('পাসওয়ার্ড পরিবর্তনের জন্য Firebase Auth প্রয়োজন (প্লেসহোল্ডার)।')" class="w-full py-3 font-bold rounded-xl text-white transition-all duration-300 bg-red-600/70 hover:bg-red-700/70">
-                                ${T('changePass')}
-                            </button>
-                        </div>
-                    </div>
-                `;
-
-                const infoSection = `
-                    <div class="space-y-3 text-white/80">
-                        <p><strong>${T('appVersion')}:</strong> 1.0.0 (Auto)</p>
-                        <p><strong>${T('yourIP')}:</strong> ${userProfile.ip || T('ipFetching')}</p>
-                        <p class="pt-2 border-t border-white/10">
-                            <strong>${T('privacyPolicy')}:</strong> <span class="text-blue-300 cursor-pointer hover:underline" onclick="showMessage(systemConfig.privacyPolicy || 'Admin দ্বারা পলিসি সেট করা হয়নি।')">${T('privacyPolicy')}</span>
-                        </p>
-                        <p>
-                            <strong>${T('contactUs')}:</strong> <span class="text-blue-300 cursor-pointer hover:underline" onclick="showMessage(systemConfig.contactUs || 'Admin দ্বারা যোগাযোগের তথ্য সেট করা হয়নি।')">${T('contactUs')}</span>
-                        </p>
-                        <button onclick="handleLogout()" class="w-full py-3 font-bold rounded-xl text-white transition-all duration-300 bg-red-800/70 hover:bg-red-900/70 mt-4">
-                            ${T('logout')}
-                        </button>
-                    </div>
-                `;
-
-                return `
-                    <button onclick="window.setView('dashboard')" class="mb-4 text-white/70 hover:text-white transition-colors flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 00-1.414 0L8 8.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
-                        ${T('backToDash')}
-                    </button>
-                    <h2 class="text-3xl font-bold text-white mb-6 border-b border-white/20 pb-2">${T('profileTitle')}</h2>
-
-                    <div class="lg:grid lg:grid-cols-2 lg:gap-6">
-                        <div>
-                            ${renderGlassCard(isEditing ? editForm : profileDetails, isEditing ? T('editProfile') : T('userProfile'), 'mb-6')}
-                            <div class="text-center">
-                                <button onclick="window.renderProfileSettings(!${isEditing})" class="text-blue-300 hover:text-blue-100 transition-colors font-semibold mb-6">
-                                    ${isEditing ? 'এডিট বাতিল করুন' : T('editProfile')}
-                                </button>
-                            </div>
-                        </div>
-                        <div>
-                            ${renderGlassCard(settings, T('profileTitle'), 'mb-6')}
-                            ${renderGlassCard(infoSection, T('appInfo'), 'space-y-3')}
-                        </div>
-                    </div>
-                `;
-            };
-            window.renderProfileSettings = (isEditing) => {
-                appContainer.innerHTML = renderProfileSettings(isEditing);
-                attachProfileHandlers();
-            };
-            
-            const attachProfileHandlers = () => {
-                if (document.getElementById('edit-profile-form')) {
-                    document.getElementById('edit-profile-form').onsubmit = async (e) => {
-                        e.preventDefault();
-                        const newDisplayName = document.getElementById('edit-display-name').value;
-                        const btn = document.getElementById('profile-save-btn');
-
-                        btn.disabled = true;
-                        btn.innerHTML = `${LoadingSpinner()} ${T('loading')}`;
-                        
-                        try {
-                            // Firestore: ডিসপ্লে নাম আপডেট
-                            const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/profile/data`);
-                            await updateDoc(userDocRef, { displayName: newDisplayName });
-                            showMessage(T('profileUpdated'), 'success');
-                            window.renderProfileSettings(false);
-                        } catch (error) {
-                            console.error("প্রোফাইল আপডেটে এরর:", error);
-                            showMessage(T('failedRequest'), 'error');
-                        } finally {
-                            btn.disabled = false;
-                            btn.innerHTML = T('saveChanges');
-                        }
-                    };
-                }
-            };
-
-            // --- ১১. কোর অ্যাপ্লিকেশন ফ্লো ---
-
-            const handleLogout = async () => {
-                try {
-                    await window.firebase.signOut(auth);
-                } catch (error) {
-                    console.error("লগআউট এরর:", error);
-                }
-            };
-            window.handleLogout = handleLogout; // গ্লোবালি এক্সপোজ করা হলো
-
-            // Auth স্টেট পরিবর্তনে নজর রাখা
-            window.firebase.onAuthStateChanged(auth, (user) => {
-                if (user && user.emailVerified) {
-                    isAuthenticated = true;
-                    userId = user.uid;
-                    if (currentView === 'auth' || currentView === 'splash') {
-                        renderView('dashboard');
-                    }
-                } else if (user && !user.isAnonymous) {
-                    // লগইন হয়েছে কিন্তু যাচাইকৃত নয়
-                    if (currentView !== 'auth') {
-                         showMessage('লগইন করার আগে দয়া করে আপনার ইমেল যাচাই করুন।', 'error');
-                         window.firebase.signOut(auth);
-                    }
-                } else {
-                    isAuthenticated = false;
-                    userId = null;
-                    userProfile = null;
-                    if (currentView !== 'splash') {
-                        renderView('auth');
-                    }
-                }
-            });
-
-            // Firestore প্রোফাইল এবং কনফিগারেশন পরিবর্তনে নজর রাখা
-            const setupFirestoreListeners = () => {
-                if (!userId) return;
-
-                // প্রোফাইল লিসেনার (প্রাইভেট ডেটা - রিয়েল-টাইম)
-                // /artifacts/{appId}/users/{userId}/profile/data
-                const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/profile/data`);
-                onSnapshot(userDocRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        userProfile = {
-                            ...data,
-                            balance: data.balance || 0,
-                            vipLevel: data.vipLevel || 0,
-                            uid: data.uid || generateMockUid(),
-                            profilePhotoUrl: data.profilePhotoUrl || 'https://placehold.co/100x100/3b82f6/ffffff?text=P',
-                        };
-                        // সুরক্ষিত ভিউতে থাকলে পুনরায় রেন্ডার করা
-                        if (isAuthenticated) {
-                            if (currentView === 'dashboard' || currentView.includes('TASK') || currentView === 'WITHDRAW' || currentView === 'PROFILE_SETTINGS' || currentView === 'REFER' || currentView === 'VIP_UPGRADE') {
-                                renderView(currentView);
-                            }
-                        }
-                    } else {
-                        // যদি ডকুমেন্ট না থাকে (নতুন ব্যবহারকারী যার ডেটা এখনো তৈরি হয়নি)
-                        userProfile = { balance: 0, vipLevel: 0, displayName: auth.currentUser?.email.split('@')[0] || 'User', email: auth.currentUser?.email || 'N/A', uid: generateMockUid(), profilePhotoUrl: 'https://placehold.co/100x100/3b82f6/ffffff?text=P' };
-                    }
-                }, (error) => console.error("প্রোফাইল লিসেনার এরর:", error));
-
-                // সিস্টেম কনফিগারেশন লিসেনার (অ্যাডমিন নিয়ন্ত্রিত পাবলিক ডেটা - রিয়েল-টাইম)
-                // /artifacts/{appId}/public/data/systemConfig/settings
-                const configDocRef = doc(db, `/artifacts/${appId}/public/data/systemConfig/settings`);
-                onSnapshot(configDocRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        systemConfig = docSnap.data();
-                    } else {
-                        // ডিফল্ট ফলব্যাক কনফিগারেশন
-                        systemConfig = {
-                            privacyPolicy: "এটি অ্যাডমিন দ্বারা সেট করা একটি প্লেসহোল্ডার পলিসি।",
-                            contactUs: "ইমেল: support@hkearn.com",
-                            admobBannerId: "ca-app-pub-xxx-banner-admin-controlled",
-                            admobInterstitialId: "ca-app-pub-xxx-inter-admin-controlled",
-                            adminPhone: "+8801700123456",
-                            minWithdrawal: 100
-                        };
-                    }
-                    if (currentView === 'VIP_UPGRADE' || currentView === 'WITHDRAW' || currentView === 'PROFILE_SETTINGS') {
-                        renderView(currentView);
-                    }
-                }, (error) => console.error("কনফিগ লিসেনার এরর:", error));
-                
-                // এক্সটার্নাল আইপি লোড করা (ক্লায়েন্ট-সাইড) এবং Firestore এ সংরক্ষণ
-                fetch('https://api.ipify.org?format=json')
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.ip) {
-                            updateDoc(userDocRef, { ip: data.ip });
-                        }
-                    })
-                    .catch(err => console.log('আইপি লোড করা যায়নি:', err));
-            };
-
-            // যখন অথ স্টেট পরিবর্তিত হয়ে লগইন হয়, তখন লিসেনার চালানো
-            onAuthStateChanged(auth, (user) => {
-                if (user && user.emailVerified) {
-                    userId = user.uid;
-                    setupFirestoreListeners();
-                }
-            });
-            
-            // প্রাথমিক অথেন্টিকেশন চেষ্টা
-            if (initialAuthToken) {
-                try {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } catch (error) {
-                    console.error("কাস্টম টোকেন সাইন-ইন ব্যর্থ, অজ্ঞাতনামা সাইন-ইন করা হচ্ছে:", error);
-                    await signInAnonymously(auth);
-                }
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const globalLoader = document.getElementById('global-loader');
+        const authScreen = document.getElementById('auth-screen');
+        const appScreen = document.getElementById('app-screen');
+        const loginView = document.getElementById('login-view');
+        const registerView = document.getElementById('register-view');
+
+        let currentUser = null;
+        let userData = null;
+
+        // Toast Notification Function
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = ``; // Reset classes
+            toast.classList.add(type, 'show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, async user => {
+            if (user) {
+                currentUser = user;
+                await loadUserData();
+                authScreen.classList.add('hidden');
+                appScreen.classList.remove('hidden');
+                navigateTo('home');
             } else {
-                await signInAnonymously(auth);
+                currentUser = null;
+                userData = null;
+                authScreen.classList.remove('hidden');
+                appScreen.classList.add('hidden');
+            }
+            globalLoader.classList.add('hidden');
+        });
+        
+        // Form switching
+        document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); loginView.classList.add('hidden'); registerView.classList.remove('hidden'); });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); registerView.classList.add('hidden'); loginView.classList.remove('hidden'); });
+
+        // Register
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const referralCode = document.getElementById('register-referral').value.trim();
+            const errorP = document.getElementById('register-error');
+            errorP.textContent = '';
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Create user profile in Firestore
+                const userRef = doc(db, "users", user.uid);
+                const newUser = {
+                    name: name,
+                    email: user.email,
+                    walletBalance: 0,
+                    referralCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
+                    createdAt: serverTimestamp()
+                };
+
+                // Handle referral
+                let bonus = 0;
+                if(referralCode) {
+                    const q = query(collection(db, "users"), where("referralCode", "==", referralCode));
+                    const querySnapshot = await getDocs(q);
+                    if (!querySnapshot.empty) {
+                        const referrerDoc = querySnapshot.docs[0];
+                        newUser.referredBy = referrerDoc.id;
+                        bonus = 50; // Referral bonus points
+                        newUser.walletBalance += bonus;
+
+                        // Give bonus to referrer
+                        const referrerRef = doc(db, "users", referrerDoc.id);
+                        const referrerData = referrerDoc.data();
+                        await setDoc(referrerRef, { walletBalance: (referrerData.walletBalance || 0) + 100 }, { merge: true });
+                    } else {
+                         showToast("ভুল রেফারেল কোড।", "error");
+                    }
+                }
+                
+                await setDoc(userRef, newUser);
+
+                if (bonus > 0) {
+                     const transactionRef = collection(db, "transactions");
+                     await addDoc(transactionRef, { userId: user.uid, type: 'bonus', amount: bonus, description: 'রেফারেল বোনাস', timestamp: serverTimestamp() });
+                }
+
+            } catch (error) {
+                errorP.textContent = "রেজিস্ট্রেশন ব্যর্থ: " + error.message;
+            }
+        });
+        
+        // Login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorP = document.getElementById('login-error');
+            errorP.textContent = '';
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                errorP.textContent = "লগইন ব্যর্থ। ইমেল বা পাসওয়ার্ড ভুল।";
+            }
+        });
+        
+        // Google Login
+        document.getElementById('google-login').addEventListener('click', async () => {
+             const provider = new GoogleAuthProvider();
+             try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                // Check if user exists in Firestore, if not create a profile
+                const userRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userRef);
+                if (!docSnap.exists()) {
+                    await setDoc(userRef, {
+                        name: user.displayName,
+                        email: user.email,
+                        walletBalance: 0,
+                        referralCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
+                        createdAt: serverTimestamp()
+                    });
+                }
+             } catch (error) {
+                console.error("Google login failed", error);
+                showToast("গুগল লগইন ব্যর্থ হয়েছে।", "error");
+             }
+        });
+
+        // Logout
+        document.getElementById('logout-button').addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // --- DATA LOADING & UI UPDATE ---
+        async function loadUserData() {
+            if (!currentUser) return;
+            const userRef = doc(db, "users", currentUser.uid);
+            const docSnap = await getDoc(userRef);
+            if (docSnap.exists()) {
+                userData = docSnap.data();
+                updateUI();
+            } else {
+                console.error("User data not found in Firestore!");
+            }
+        }
+
+        function updateUI() {
+            if (!userData) return;
+            document.getElementById('user-balance').textContent = userData.walletBalance || 0;
+            document.getElementById('profile-name').textContent = userData.name;
+            document.getElementById('profile-email').textContent = userData.email;
+            document.getElementById('referral-code').textContent = userData.referralCode;
+        }
+
+        // --- NAVIGATION ---
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        function navigateTo(pageId) {
+            pages.forEach(p => p.classList.remove('active'));
+            document.getElementById(`${pageId}-page`).classList.add('active');
+            
+            navLinks.forEach(l => l.classList.remove('active'));
+            document.querySelector(`.nav-link[data-page="${pageId}"]`).classList.add('active');
+            
+            // Load data for the specific page
+            if (pageId === 'tasks') loadTasks();
+            if (pageId === 'profile') loadTransactionHistory();
+            if (pageId === 'withdraw') loadWithdrawalHistory();
+        }
+
+        document.querySelectorAll('.nav-link-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo(btn.dataset.page);
+            });
+        });
+
+        // --- TASKS ---
+        async function loadTasks() {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '<div class="flex justify-center"><div class="loader"></div></div>';
+            const tasksRef = collection(db, "tasks");
+            const q = query(tasksRef, where("isActive", "==", true));
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                taskList.innerHTML = '<p class="text-center text-gray-500">এখন কোনো টাস্ক নেই।</p>';
+                return;
             }
 
-            // গ্লোবালি ভাষা সেট করা
-            window.setLanguage = setLanguage;
-            
-            // অ্যাপ্লিকেশন ফ্লো শুরু করা
-            renderView('splash');
+            let taskHTML = '';
+            snapshot.forEach(doc => {
+                const task = doc.data();
+                const icons = {
+                    watchVideo: 'fa-play-circle text-red-500',
+                    visitWebsite: 'fa-globe text-blue-500',
+                    clickAd: 'fa-mouse-pointer text-green-500'
+                };
+                taskHTML += `
+                <div class="task-card bg-white p-4 rounded-lg shadow flex items-center space-x-4">
+                    <i class="fas ${icons[task.type] || 'fa-tasks'} fa-2x w-10 text-center"></i>
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-gray-800">${task.title}</h4>
+                        <p class="text-sm text-gray-500">${task.reward} পয়েন্ট আয় করুন</p>
+                    </div>
+                    <button class="start-task-btn px-4 py-2 bg-indigo-500 text-white text-sm rounded-md font-semibold" data-id="${doc.id}">শুরু করুন</button>
+                </div>
+                `;
+            });
+            taskList.innerHTML = taskHTML;
+            attachTaskListeners();
+        }
 
-        }); // firebase-ready ইভেন্ট লিসেনারের শেষ
+        function attachTaskListeners() {
+            document.querySelectorAll('.start-task-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const taskId = e.target.dataset.id;
+                    const taskRef = doc(db, "tasks", taskId);
+                    const taskSnap = await getDoc(taskRef);
+                    if (taskSnap.exists()) {
+                        openTaskModal(taskSnap.data(), taskId);
+                    }
+                });
+            });
+        }
+        
+        // Task Modal Logic
+        const taskModal = document.getElementById('task-modal');
+        let timerInterval;
+
+        function openTaskModal(task, taskId) {
+            const titleEl = document.getElementById('task-modal-title');
+            const contentEl = document.getElementById('task-modal-content');
+            const timerEl = document.getElementById('task-timer');
+            const claimBtn = document.getElementById('claim-reward-btn');
+
+            titleEl.textContent = task.title;
+            claimBtn.disabled = true;
+            
+            if (task.type === 'visitWebsite' || task.type === 'clickAd') {
+                contentEl.innerHTML = `<p class="text-center">আপনাকে একটি নতুন ট্যাবে পাঠানো হচ্ছে। <br> নির্দিষ্ট সময় অপেক্ষা করার পর ফিরে এসে রিওয়ার্ড সংগ্রহ করুন।</p>`;
+                window.open(task.url, '_blank');
+            } else if (task.type === 'watchVideo') {
+                contentEl.innerHTML = `<p class="text-center">ভিডিওটি দেখুন এবং সময় শেষ হলে রিওয়ার্ড সংগ্রহ করুন।</p><p class="text-sm text-red-500 text-center">(বাস্তব অ্যাপে এখানে ভিডিও প্লেয়ার থাকবে)</p>`;
+            }
+
+            taskModal.classList.remove('hidden');
+            
+            let timeLeft = task.duration;
+            timerEl.textContent = `${timeLeft} সেকেন্ড`;
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = `${timeLeft} সেকেন্ড`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerEl.textContent = "সময় শেষ!";
+                    claimBtn.disabled = false;
+                }
+            }, 1000);
+            
+            claimBtn.onclick = () => claimReward(task, taskId);
+        }
+        
+        document.getElementById('close-task-modal').addEventListener('click', () => {
+            clearInterval(timerInterval);
+            taskModal.classList.add('hidden');
+        });
+        
+        async function claimReward(task, taskId) {
+            clearInterval(timerInterval);
+            taskModal.classList.add('hidden');
+            
+            const batch = writeBatch(db);
+
+            // 1. Update user balance
+            const userRef = doc(db, "users", currentUser.uid);
+            const newBalance = (userData.walletBalance || 0) + task.reward;
+            batch.update(userRef, { walletBalance: newBalance });
+
+            // 2. Add to transaction history
+            const transRef = doc(collection(db, "transactions"));
+            batch.set(transRef, {
+                userId: currentUser.uid,
+                type: 'credit',
+                amount: task.reward,
+                description: `টাস্ক সম্পন্ন: ${task.title}`,
+                timestamp: serverTimestamp()
+            });
+            
+            await batch.commit();
+
+            showToast(`${task.reward} পয়েন্ট যোগ হয়েছে!`, 'success');
+            await loadUserData(); // Refresh user data and UI
+        }
+        
+        // --- WITHDRAW ---
+        document.getElementById('withdraw-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const amount = parseInt(document.getElementById('withdraw-amount').value);
+            const method = document.getElementById('withdraw-method').value;
+            const account = document.getElementById('withdraw-account').value;
+            
+            const pointsToDeduct = amount * 100; // 10 BDT = 1000 points
+
+            if (pointsToDeduct > userData.walletBalance) {
+                showToast("আপনার পর্যাপ্ত ব্যালেন্স নেই!", "error");
+                return;
+            }
+
+            const batch = writeBatch(db);
+            // 1. Deduct points from user
+            const userRef = doc(db, "users", currentUser.uid);
+            const newBalance = userData.walletBalance - pointsToDeduct;
+            batch.update(userRef, { walletBalance: newBalance });
+
+            // 2. Create withdrawal request
+            const withdrawalRef = doc(collection(db, "withdrawals"));
+            batch.set(withdrawalRef, {
+                userId: currentUser.uid,
+                userName: userData.name,
+                amount: amount,
+                method: method,
+                accountInfo: account,
+                status: 'pending',
+                requestedAt: serverTimestamp()
+            });
+            
+            // 3. Log transaction
+            const transRef = doc(collection(db, "transactions"));
+            batch.set(transRef, {
+                userId: currentUser.uid,
+                type: 'debit',
+                amount: -pointsToDeduct,
+                description: `উইথড্রল রিকোয়েস্ট`,
+                timestamp: serverTimestamp()
+            });
+
+            await batch.commit();
+
+            showToast("আপনার উইথড্রল রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে।");
+            e.target.reset();
+            await loadUserData();
+            loadWithdrawalHistory();
+        });
+
+        async function loadWithdrawalHistory() {
+             const historyDiv = document.getElementById('withdrawal-history');
+             historyDiv.innerHTML = '<p>লোড হচ্ছে...</p>';
+             const q = query(collection(db, "withdrawals"), where("userId", "==", currentUser.uid), orderBy("requestedAt", "desc"));
+             const snapshot = await getDocs(q);
+
+             if (snapshot.empty) {
+                 historyDiv.innerHTML = '<p class="text-center text-gray-500">কোনো হিস্ট্রি নেই।</p>';
+                 return;
+             }
+             
+             let html = '';
+             snapshot.forEach(doc => {
+                 const req = doc.data();
+                 const statusColors = { pending: 'text-yellow-500', approved: 'text-green-500', rejected: 'text-red-500' };
+                 html += `
+                    <div class="bg-gray-50 p-3 rounded-md flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">${req.amount} টাকা - ${req.method}</p>
+                            <p class="text-xs text-gray-500">${new Date(req.requestedAt.seconds * 1000).toLocaleString('bn-BD')}</p>
+                        </div>
+                        <p class="font-bold ${statusColors[req.status]}">${req.status.toUpperCase()}</p>
+                    </div>
+                 `;
+             });
+             historyDiv.innerHTML = html;
+        }
+
+        // --- PROFILE & HISTORY ---
+        document.getElementById('copy-referral-btn').addEventListener('click', () => {
+            const code = document.getElementById('referral-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('রেফারেল কোড কপি করা হয়েছে!', 'success');
+            });
+        });
+
+        async function loadTransactionHistory() {
+            const historyDiv = document.getElementById('transaction-history');
+            historyDiv.innerHTML = '<p>লোড হচ্ছে...</p>';
+            const q = query(collection(db, "transactions"), where("userId", "==", currentUser.uid), orderBy("timestamp", "desc"), limit(20));
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) {
+                 historyDiv.innerHTML = '<p class="text-center text-gray-500">কোনো লেনদেন নেই।</p>';
+                 return;
+             }
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const trans = doc.data();
+                const isCredit = trans.type === 'credit' || trans.type === 'bonus';
+                html += `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-medium">${trans.description}</p>
+                            <p class="text-xs text-gray-500">${new Date(trans.timestamp.seconds * 1000).toLocaleDateString('bn-BD')}</p>
+                        </div>
+                        <p class="font-bold ${isCredit ? 'text-green-600' : 'text-red-600'}">${isCredit ? '+' : ''}${trans.amount}</p>
+                    </div>
+                `;
+            });
+            historyDiv.innerHTML = html;
+        }
+
     </script>
 </body>
-</html>
+    </html>
